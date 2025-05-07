@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  frontend:
+    container_name: BIBA_FRONTEND
+    build:
+      context: ./
+      dockerfile: Dockerfile.frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app/frontend
+      - /app/frontend/node_modules
+    environment:
+      - FE_PORT=3000
+      - CHOKIDAR_USEPOLLING=true
+    command: yarn dev
+
+  backend:
+    container_name: BOBA_BACKEND
+    stdin_open: true
+    tty: true
+    build:
+      context: ./
+      dockerfile: Dockerfile.backend
+    volumes:
+      - ./backend:/app/backend
+      - /app/backend/node_modules
+    restart: always
+    ports:
+      - "8080:8080"
+    command: yarn start:dev
+    environment:
+      - BE_PORT=8080
+      - NODE_ENV=development

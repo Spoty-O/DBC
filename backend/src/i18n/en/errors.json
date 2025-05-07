@@ -1,0 +1,13 @@
+{
+  "somethingWentWrong": "Something went wrong. Please try again later.",
+  "accessDenied": "Access denied",
+  "youDoNotHaveAccessWithThisRole": "You do not have access with this role",
+  "dataIsMissing": "Data is missing",
+  "internal": "Internal server error",
+  "notFound": "Not found",
+  "conflict": "Conflict",
+  "unauthorized": "Unauthorized",
+  "forbidden": "Forbidden",
+  "badRequest": "Bad request",
+  "staffNotFound": "Staff not found"
+}
