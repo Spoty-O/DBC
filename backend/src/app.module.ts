@@ -17,6 +17,7 @@ import {
   QueryResolver,
 } from 'nestjs-i18n';
 import { MongooseModule } from '@nestjs/mongoose';
+import { NlpModule } from './modules/nlp/nlp.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     }),
     ScheduleModule.forRoot(),
     StaffModule,
+    NlpModule,
   ],
   providers: [
     {

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { StaffResponseModel } from '../../../../shared/models/staff.model';
+import { StaffResponseModel } from '../../../../shared/entities/staff.model';
 
 export class GetAllReturnDto {
   @ApiProperty({

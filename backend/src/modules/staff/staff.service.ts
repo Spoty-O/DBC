@@ -5,7 +5,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 
 import { ErrorService } from '../error/error.service';
-import { StaffResponseModel } from '../../shared/models/staff.model';
+import { StaffResponseModel } from '../../shared/entities/staff.model';
 import { CreateDto } from './dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
