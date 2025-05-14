@@ -28,7 +28,7 @@ export class TypeParser implements IFieldParser {
     .map((type) => type.trim().replace(/\s+/g, '\\s+'))
     .join('|');
 
-  readonly regexp = new RegExp(`(?<=type\s*)(${this.pattern})`, 'i');
+  readonly regexp = new RegExp(`(?<=type\\s*)(${this.pattern})`, 'i');
 
   parse(text: string): Partial<ITableField> | null {
     const match = text.match(this.regexp);

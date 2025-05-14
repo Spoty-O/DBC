@@ -6,7 +6,7 @@ export interface ITableField {
   unique?: boolean;
   primaryKey?: boolean;
   autoIncrement?: boolean;
-  foreignKey?: boolean;
+  foreignKey?: { tableName: string; columnName: string };
   check?: string;
   enum?: string[];
   index?: boolean;
