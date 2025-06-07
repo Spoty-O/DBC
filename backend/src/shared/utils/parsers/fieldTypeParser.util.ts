@@ -1,4 +1,4 @@
-import { IFieldParser, ITableField } from 'src/shared/interfaces/nlp.interface';
+import { IFieldParser, ITableField } from 'src/shared/interfaces';
 
 export class TypeParser implements IFieldParser {
   readonly types = [
@@ -25,16 +25,16 @@ export class TypeParser implements IFieldParser {
   ];
 
   private readonly pattern = this.types
-    .map((type) => type.trim().replace(/\s+/g, '\\s+'))
+    .map((type) => type.trim().replace(/\s+/gi, '\\s+'))
     .join('|');
 
   readonly regexp = new RegExp(`(?<=type\\s*)(${this.pattern})`, 'i');
 
-  parse(text: string): Partial<ITableField> | null {
+  async parse(text: string): Promise<Partial<ITableField> | null> {
     const match = text.match(this.regexp);
     if (match) {
       return { type: match[0].trim() };
     }
-    return { type: 'string' };
+    return { type: 'varchar(255)' };
   }
 }

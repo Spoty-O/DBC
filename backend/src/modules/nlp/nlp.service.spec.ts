@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NlpService } from './nlp.service';
 import { ErrorService } from '../error/error.service';
 import { errorServiceMock } from 'src/shared/mocks/error.mock';
-import { simpleFixture, simpleResultFixture } from 'src/shared/fixtures';
+import { nlpResultFixture, userInputFixture } from 'src/shared/fixtures';
 
 describe('NlpService', () => {
   let service: NlpService;
@@ -16,7 +16,7 @@ describe('NlpService', () => {
       ],
     }).compile();
 
-    errorService = module.get(ErrorService);
+    errorService = module.get<ErrorService>(ErrorService);
     service = module.get<NlpService>(NlpService);
   });
 
@@ -25,9 +25,9 @@ describe('NlpService', () => {
     jest.restoreAllMocks();
   });
 
-  it('should be parsed', () => {
-    expect(service.parseTemplateText(simpleFixture)).toStrictEqual([
-      simpleResultFixture,
-    ]);
+  it('should be parsed', async () => {
+    await expect(
+      service.parseTemplateText(userInputFixture),
+    ).resolves.toStrictEqual(nlpResultFixture);
   });
 });

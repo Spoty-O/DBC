@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { NlpService } from './nlp.service';
-import { ErrorService } from '../error/error.service';
+import { NLP_SERVICE } from 'src/shared/constants';
 
 @Module({
-  imports: [ErrorService],
-  controllers: [],
-  providers: [NlpService],
+  providers: [{ provide: NLP_SERVICE, useClass: NlpService }],
+  exports: [NLP_SERVICE],
 })
 export class NlpModule {}

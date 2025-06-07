@@ -1,13 +1,13 @@
-import { IFieldParser, ITableField } from 'src/shared/interfaces/nlp.interface';
+import { IFieldParser, ITableField } from 'src/shared/interfaces';
 
 export class NullableParser implements IFieldParser {
-  readonly regexp = /nullable/i;
+  readonly regexp = /not null/i;
 
-  parse(text: string): Partial<ITableField> | null {
+  async parse(text: string): Promise<Partial<ITableField> | null> {
     const match = text.match(this.regexp);
     if (match) {
-      return { nullable: true };
+      return { nullable: false };
     }
-    return null;
+    return { nullable: false };
   }
 }

@@ -1,13 +1,13 @@
-import { IFieldParser, ITableField } from 'src/shared/interfaces/nlp.interface';
+import { IFieldParser, ITableField } from 'src/shared/interfaces';
 
 export class IndexParser implements IFieldParser {
   readonly regexp = /index/i;
 
-  parse(text: string): Partial<ITableField> | null {
+  async parse(text: string): Promise<Partial<ITableField> | null> {
     const match = text.match(this.regexp);
     if (match) {
       return { index: true };
     }
-    return null;
+    return { index: false };
   }
 }

@@ -1,9 +1,9 @@
-import { IFieldParser, ITableField } from 'src/shared/interfaces/nlp.interface';
+import { IFieldParser, ITableField } from 'src/shared/interfaces';
 
 export class CheckConstraintParser implements IFieldParser {
   readonly regexp: RegExp = /(?<=check\s*=?\s*)\(([^)]+)\)/i;
 
-  parse(text: string): Partial<ITableField> | null {
+  async parse(text: string): Promise<Partial<ITableField> | null> {
     const match = text.match(this.regexp);
     if (!match) {
       return null;

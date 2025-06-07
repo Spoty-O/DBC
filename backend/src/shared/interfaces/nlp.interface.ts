@@ -1,24 +1,8 @@
-export interface ITableField {
-  name: string;
-  type?: string;
-  defaultValue?: string | number | boolean | null;
-  nullable?: boolean;
-  unique?: boolean;
-  primaryKey?: boolean;
-  autoIncrement?: boolean;
-  foreignKey?: { tableName: string; columnName: string };
-  check?: string;
-  enum?: string[];
-  index?: boolean;
-  length?: number;
-}
+import { IFieldParser } from './parser.util.interface';
+import { ITableSchema } from './table.interface';
 
-export interface ITableSchema {
-  name: string;
-  fields: ITableField[];
-}
+export interface INlpService {
+  readonly fieldParsers: IFieldParser[];
 
-export interface IFieldParser {
-  readonly regexp: RegExp;
-  parse(text: string): Partial<ITableField> | null;
+  parseTemplateText(text: string): Promise<ITableSchema[]>;
 }

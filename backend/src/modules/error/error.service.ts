@@ -1,15 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
-import { I18nPath } from 'src/generated/i18n.generated';
+import { IErrorItem, IErrorService } from 'src/shared/interfaces';
 import { CustomError } from './custom-error';
 
-interface IErrorItem {
-  key: I18nPath;
-  args?: Record<string, any>;
-}
-
 @Injectable()
-export class ErrorService {
+export class ErrorService implements IErrorService {
   constructor(private readonly i18n: I18nService) {}
 
   async sendError(errorCode: number, errors: IErrorItem[]) {

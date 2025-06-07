@@ -1,42 +1,46 @@
 import { Injectable } from '@nestjs/common';
 import {
   IFieldParser,
+  INlpService,
   ITableField,
   ITableSchema,
-} from 'src/shared/interfaces/nlp.interface';
+} from 'src/shared/interfaces';
 import * as parsers from 'src/shared/utils/parsers';
-import { TableNameParser } from 'src/shared/utils/parsers/tableNameParser.util';
 import { ErrorService } from '../error/error.service';
+import { getOrCreate } from 'src/shared/utils';
 
 @Injectable()
-export class NlpService {
-  private readonly fieldParsers: IFieldParser[];
-  private readonly tableNameParser: IFieldParser;
+export class NlpService implements INlpService {
+  readonly fieldParsers: IFieldParser[];
+  readonly tableNameParser: IFieldParser;
 
   constructor(private readonly errorService: ErrorService) {
-    this.fieldParsers = Object.values(parsers).map(
+    const { TableNameParser, ...otherParsers } = parsers;
+    this.fieldParsers = Object.values(otherParsers).map(
       (ParserClass) => new ParserClass(),
     );
     this.tableNameParser = new TableNameParser();
   }
 
-  public parseTemplateText(text: string): ITableSchema[] {
+  public async parseTemplateText(text: string): Promise<ITableSchema[]> {
     const tables = new Map<string, ITableSchema>();
     const lines = text.split('\n').map((line) => line.trim());
     for (const line of lines) {
-      const tableName = this.tableNameParser.parse(line);
+      const tableName = await this.tableNameParser.parse(line);
       if (!tableName?.name) continue;
-      if (!tables.get(tableName.name)) {
-        tables.set(tableName.name, { name: tableName.name, fields: [] });
-      }
-      let field: ITableField = { name: '' };
-      for (const parser of this.fieldParsers) {
-        const parameter = parser.parse(line);
-        if (parameter) {
-          field = { ...field, ...parameter };
-        }
-      }
-      tables.get(tableName.name)?.fields.push(field);
+      let field: ITableField = {
+        name: '',
+        type: 'varchar(255)',
+        nullable: true,
+      };
+      const promiseList = this.fieldParsers.map((parser) => parser.parse(line));
+      const resolvedPromiseList = await Promise.allSettled(promiseList);
+      resolvedPromiseList.forEach((res) => {
+        if (res.status === 'fulfilled' && res.value)
+          field = { ...field, ...res.value };
+      });
+      const table = getOrCreate(tables, tableName.name);
+      table.fields.push(field);
     }
     return Array.from(tables.values());
   }

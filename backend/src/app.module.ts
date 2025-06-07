@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { StaffModule } from './modules';
+// import { StaffModule } from './modules';
 
-import { ScheduleModule } from '@nestjs/schedule';
+// import { ScheduleModule } from '@nestjs/schedule';
 import { CacheModule } from '@nestjs/cache-manager';
 import { CACHE_MAX_VALUES, CACHE_TTL } from './shared/constants/cache.const';
 import { APP_FILTER } from '@nestjs/core';
@@ -16,13 +16,15 @@ import {
   I18nModule,
   QueryResolver,
 } from 'nestjs-i18n';
-import { MongooseModule } from '@nestjs/mongoose';
-import { NlpModule } from './modules/nlp/nlp.module';
-
+import { SchemaGeneratorModule } from './modules';
+import { ErrorModule } from './modules/error/error.module';
+import { EnvironmentVariables, envValidate } from './config/env.config';
+// import { MongooseModule } from '@nestjs/mongoose';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validate: envValidate,
     }),
     CacheModule.register({
       ttl: CACHE_TTL,
@@ -30,16 +32,15 @@ import { NlpModule } from './modules/nlp/nlp.module';
       isGlobal: true,
     }),
     I18nModule.forRootAsync({
-      useFactory: async () => ({
+      useFactory: async (
+        configService: ConfigService<EnvironmentVariables>,
+      ) => ({
         loaderOptions: {
-          path: path.join(process.cwd(), 'src/i18n/'),
+          path: path.join(__dirname, '/i18n/'),
           watch: true,
         },
-        fallbackLanguage: process.env.FALLBACK_LANGUAGE || 'en',
-        typesOutputPath: path.join(
-          process.cwd(),
-          'src/generated/i18n.generated.ts',
-        ),
+        fallbackLanguage: configService.getOrThrow('FALLBACK_LANGUAGE') || 'en',
+        typesOutputPath: path.join(__dirname, '/generated/i18n.generated.ts'),
         logging: true,
       }),
       resolvers: [
@@ -48,17 +49,18 @@ import { NlpModule } from './modules/nlp/nlp.module';
         { use: CookieResolver, options: ['x-lang'] },
         AcceptLanguageResolver,
       ],
-      inject: [],
+      inject: [ConfigService],
     }),
-    MongooseModule.forRoot(process.env.DB_URL, {
-      connectionErrorFactory: (error) => {
-        console.log(error);
-        process.exit(1);
-      },
-    }),
-    ScheduleModule.forRoot(),
-    StaffModule,
-    NlpModule,
+    // MongooseModule.forRoot(process.env.DB_URL, {
+    //   connectionErrorFactory: (error) => {
+    //     console.log(error);
+    //     process.exit(1);
+    //   },
+    // }),
+    // ScheduleModule.forRoot(),
+    // StaffModule,
+    ErrorModule,
+    SchemaGeneratorModule,
   ],
   providers: [
     {

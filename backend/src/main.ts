@@ -2,14 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
-import checkEnv from './env';
-import * as bodyParser from 'body-parser';
+// import * as bodyParser from 'body-parser';
 
 import { CustomI18nValidationPipe } from './shared/pipes/custom-i18n-validation.pipe';
+import { ConfigService } from '@nestjs/config';
+import { EnvironmentVariables } from './config/env.config';
 
 async function bootstrap(): Promise<void> {
-  checkEnv();
-
+  console.log(process.cwd());
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(
@@ -21,11 +21,13 @@ async function bootstrap(): Promise<void> {
 
   app.enableShutdownHooks();
 
+  const configService = app.get(ConfigService<EnvironmentVariables, true>);
+
   const config = new DocumentBuilder()
     .setTitle('NEST API')
     .setDescription('API documentation by NEST development team')
     .setVersion('1.0')
-    .addServer(process.env.OWN_URL, 'Local server')
+    .addServer(configService.get('OWN_URL'), 'Local server')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -37,10 +39,10 @@ async function bootstrap(): Promise<void> {
     credentials: true,
   });
 
-  app.use(bodyParser.json({ limit: '4gb' }));
-  app.use(bodyParser.urlencoded({ limit: '4gb', extended: true }));
+  // app.use(bodyParser.json({ limit: '4gb' }));
+  // app.use(bodyParser.urlencoded({ limit: '4gb', extended: true }));
 
-  await app.listen(process.env.PORT || 8080, () => {
+  await app.listen(configService.get('PORT'), () => {
     console.log(`Server is running on ${process.env.PORT || 8080}`);
   });
 }
