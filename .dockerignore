@@ -2,5 +2,6 @@
 .git
 .gitignore
 *.md
-dist
-venv
+**/dist/
+**/venv/
+Dockerfile*
