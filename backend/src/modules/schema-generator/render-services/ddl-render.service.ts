@@ -4,7 +4,7 @@ import {
   IRenderUtil,
   ITableSchema,
 } from 'src/shared/interfaces';
-import { ErrorService } from '../error/error.service';
+import { ErrorService } from 'src/modules/error/error.service';
 import * as utils from 'src/shared/utils/ddl-render';
 
 @Injectable()

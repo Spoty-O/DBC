@@ -9,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { EnvironmentVariables } from './config/env.config';
 
 async function bootstrap(): Promise<void> {
-  console.log(process.cwd());
+  console.log(process.cwd() + '/dist/src/shared/entities/*.entity.js');
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(

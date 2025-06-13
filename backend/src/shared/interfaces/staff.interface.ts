@@ -1,5 +1,5 @@
-import { Document } from 'mongoose';
+// import { Document } from 'mongoose';
 
-export interface IStaff extends Document {
-  readonly name: string;
-}
+// export interface IStaff extends Document {
+//   readonly name: string;
+// }

@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmRenderService } from './type-orm-render.service';
+import { UserService } from './user.service';
 
-describe('TypeOrmRenderService', () => {
-  let service: TypeOrmRenderService;
+describe('UserService', () => {
+  let service: UserService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TypeOrmRenderService],
+      providers: [UserService],
     }).compile();
 
-    service = module.get<TypeOrmRenderService>(TypeOrmRenderService);
+    service = module.get<UserService>(UserService);
   });
 
   it('should be defined', () => {

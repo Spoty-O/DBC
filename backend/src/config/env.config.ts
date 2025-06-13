@@ -1,3 +1,4 @@
+import { ConfigModuleOptions } from '@nestjs/config';
 import { plainToInstance } from 'class-transformer';
 import {
   IsEnum,
@@ -43,3 +44,9 @@ export function envValidate(config: Record<string, unknown>) {
   }
   return validatedConfig;
 }
+
+export const envConfig: ConfigModuleOptions = {
+  isGlobal: true,
+  validate: envValidate,
+  envFilePath: `.${process.env.NODE_ENV || Environment.Development}.env`,
+};

@@ -1,2 +1,1 @@
-export const NLP_SERVICE = 'NLP_SERVICE';
-export const RENDER_REGISTRY = 'RENDER_REGISTRY';
+export const RENDER_TOKEN = 'RENDER_TOKEN';

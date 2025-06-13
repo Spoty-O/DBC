@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DdlRenderService } from './ddl-render.service';
-import { ErrorService } from '../error/error.service';
+import { ErrorService } from '../../error/error.service';
 import { errorServiceMock } from 'src/shared/mocks/error.mock';
 import { ddlRenderResultFixture, nlpResultFixture } from 'src/shared/fixtures';
 

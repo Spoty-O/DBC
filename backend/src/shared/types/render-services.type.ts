@@ -1,4 +1,9 @@
 import { IRenderService } from '../interfaces';
 
-export type TRenderServices = 'ddlRenderService';
-export type TRenderMap = Record<TRenderServices, IRenderService>;
+export enum ERenderKeys {
+  MY_SQL = 'MySQL',
+}
+
+export type TRenderMap = {
+  [ERenderKeys.MY_SQL]: IRenderService;
+};
