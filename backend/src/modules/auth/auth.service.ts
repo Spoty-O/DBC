@@ -16,7 +16,7 @@ export class AuthService {
 
   async signUp(body: AuthDto) {
     const { id } = await this.userService.create(body);
-    return await this.generateTokens({ sub: id }, body.rememberMe);
+    return await this.generateTokens(id, body.rememberMe);
   }
 
   private async validateUser(body: AuthDto) {
@@ -28,20 +28,26 @@ export class AuthService {
     return user;
   }
 
-  private async generateTokens(payload: IJwtPayload, rememberMe: boolean) {
-    const accessToken = this.jwtService.sign(payload, { expiresIn: '15min' });
-    const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: rememberMe ? '30d' : '5d',
-    });
+  private async generateTokens(id: string, rememberMe: boolean) {
+    const accessToken = this.jwtService.sign(
+      { sub: id },
+      { expiresIn: '15min' },
+    );
+    const refreshToken = this.jwtService.sign(
+      { sub: id },
+      {
+        expiresIn: rememberMe ? '30d' : '5d',
+      },
+    );
     return { accessToken, refreshToken };
   }
 
   async signIn(body: AuthDto) {
     const { id } = await this.validateUser(body);
-    return await this.generateTokens({ sub: id }, body.rememberMe);
+    return await this.generateTokens(id, body.rememberMe);
   }
 
-  async refresh(payload: IJwtPayload) {
-    return this.jwtService.sign(payload, { expiresIn: '15min' });
+  async refresh({ sub }: IJwtPayload) {
+    return this.jwtService.sign({ sub }, { expiresIn: '15min' });
   }
 }

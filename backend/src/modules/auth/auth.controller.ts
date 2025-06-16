@@ -36,7 +36,7 @@ export class AuthController {
 
   @Post('refresh')
   @UseGuards(JwtCookiesAuthGuard)
-  async refresh(@Req() req: RequestWith<{ payload: IJwtPayload }>) {
-    return await this.authService.refresh(req.payload);
+  async refresh(@Req() req: RequestWith<{ user: IJwtPayload }>) {
+    return await this.authService.refresh(req.user);
   }
 }
