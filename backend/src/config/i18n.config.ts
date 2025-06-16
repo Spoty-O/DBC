@@ -1,4 +1,3 @@
-import { ConfigService } from '@nestjs/config';
 import {
   AcceptLanguageResolver,
   CookieResolver,
@@ -6,16 +5,16 @@ import {
   I18nAsyncOptions,
   QueryResolver,
 } from 'nestjs-i18n';
-import { EnvironmentVariables } from './env.config';
 import path from 'path';
+import { ApiConfigService } from 'src/modules/api-config/api-config.service';
 
 export const i18nConfig: I18nAsyncOptions = {
-  useFactory: (configService: ConfigService<EnvironmentVariables>) => ({
+  useFactory: (configService: ApiConfigService) => ({
     loaderOptions: {
       path: path.join(process.cwd(), 'dist/src/i18n'),
       watch: true,
     },
-    fallbackLanguage: configService.getOrThrow('FALLBACK_LANGUAGE'),
+    fallbackLanguage: configService.fallbackLanguage,
     typesOutputPath: path.join(
       process.cwd(),
       'dist/src/generated/i18n.generated.js',
@@ -28,5 +27,5 @@ export const i18nConfig: I18nAsyncOptions = {
     { use: CookieResolver, options: ['x-lang'] },
     AcceptLanguageResolver,
   ],
-  inject: [ConfigService],
+  inject: [ApiConfigService],
 };

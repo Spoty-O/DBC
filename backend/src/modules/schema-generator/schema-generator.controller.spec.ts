@@ -11,7 +11,9 @@ describe('SchemaGeneratorController', () => {
       providers: [SchemaGeneratorService],
     }).compile();
 
-    controller = module.get<SchemaGeneratorController>(SchemaGeneratorController);
+    controller = module.get<SchemaGeneratorController>(
+      SchemaGeneratorController,
+    );
   });
 
   it('should be defined', () => {

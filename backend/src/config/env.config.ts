@@ -1,38 +1,11 @@
 import { ConfigModuleOptions } from '@nestjs/config';
 import { plainToInstance } from 'class-transformer';
-import {
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
-  validateSync,
-} from 'class-validator';
-import { Environment } from 'src/shared/types';
+import { isEnum, validateSync } from 'class-validator';
+import { EnvironmentMode } from 'src/shared/types';
+import { EnvDto } from '../modules/api-config/dto/env.dto';
 
-export class EnvironmentVariables {
-  @IsEnum(Environment)
-  @IsOptional()
-  NODE_ENV: Environment = Environment.Development;
-
-  @IsNumber()
-  @Min(0)
-  @Max(65535)
-  PORT!: number;
-
-  @IsString()
-  DB_URL!: string;
-
-  @IsString()
-  FALLBACK_LANGUAGE!: string;
-
-  @IsString()
-  OWN_URL!: string;
-}
-
-export function envValidate(config: Record<string, unknown>) {
-  const validatedConfig = plainToInstance(EnvironmentVariables, config, {
+function envValidate(config: Record<string, unknown>) {
+  const validatedConfig = plainToInstance(EnvDto, config, {
     enableImplicitConversion: true,
   });
   const errors = validateSync(validatedConfig, {
@@ -48,5 +21,5 @@ export function envValidate(config: Record<string, unknown>) {
 export const envConfig: ConfigModuleOptions = {
   isGlobal: true,
   validate: envValidate,
-  envFilePath: `.${process.env.NODE_ENV || Environment.Development}.env`,
+  envFilePath: `.${isEnum(process.env.NODE_ENV, EnvironmentMode) ? process.env.NODE_ENV : EnvironmentMode.Development}.env`,
 };

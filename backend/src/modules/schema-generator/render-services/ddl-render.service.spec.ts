@@ -6,7 +6,7 @@ import { ddlRenderResultFixture, nlpResultFixture } from 'src/shared/fixtures';
 
 describe('DdlRenderService', () => {
   let service: DdlRenderService;
-  let errorService: ErrorService;
+  // let errorService: ErrorService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -16,7 +16,7 @@ describe('DdlRenderService', () => {
       ],
     }).compile();
 
-    errorService = module.get<ErrorService>(ErrorService);
+    // errorService = module.get<ErrorService>(ErrorService);
     service = module.get<DdlRenderService>(DdlRenderService);
   });
 

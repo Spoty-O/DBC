@@ -6,7 +6,7 @@ import { nlpResultFixture, userInputFixture } from 'src/shared/fixtures';
 
 describe('NlpService', () => {
   let service: NlpService;
-  let errorService: ErrorService;
+  // let errorService: ErrorService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -16,7 +16,7 @@ describe('NlpService', () => {
       ],
     }).compile();
 
-    errorService = module.get<ErrorService>(ErrorService);
+    // errorService = module.get<ErrorService>(ErrorService);
     service = module.get<NlpService>(NlpService);
   });
 
