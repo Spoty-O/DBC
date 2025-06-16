@@ -5,11 +5,18 @@ import { UserModule } from '../user/user.module';
 import { jwtConfig } from 'src/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './jwt.strategy';
+import { CookiesModule } from '../cookies/cookies.module';
+import { JwtHeaderStrategy } from './jwt-header.strategy';
+import { JwtCookiesStrategy } from './jwt-cookies.strategy';
 
 @Module({
-  imports: [UserModule, PassportModule, JwtModule.registerAsync(jwtConfig)],
+  imports: [
+    UserModule,
+    PassportModule,
+    JwtModule.registerAsync(jwtConfig),
+    CookiesModule,
+  ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtHeaderStrategy, JwtCookiesStrategy],
 })
 export class AuthModule {}

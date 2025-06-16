@@ -1,16 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
 import { AppModule } from './app.module';
-// import * as bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-
 import { CustomI18nValidationPipe } from './shared/pipes/custom-i18n-validation.pipe';
 import { ApiConfigService } from './modules/api-config/api-config.service';
+import * as bodyParser from 'body-parser';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap(): Promise<void> {
   console.log(process.cwd() + '/dist/src/shared/entities/*.entity.js');
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.useGlobalPipes(
     new CustomI18nValidationPipe({
@@ -40,8 +39,8 @@ async function bootstrap(): Promise<void> {
   });
 
   app.use(cookieParser());
-  // app.use(bodyParser.json({ limit: '4gb' }));
-  // app.use(bodyParser.urlencoded({ limit: '4gb', extended: true }));
+  app.use(bodyParser.json({ limit: '100kb' }));
+  app.use(bodyParser.urlencoded({ limit: '100kb', extended: true }));
 
   await app.listen(configService.port, () => {
     console.log(`Server is running on ${configService.port || 8080}`);
@@ -49,5 +48,3 @@ async function bootstrap(): Promise<void> {
 }
 
 bootstrap();
-
-//

@@ -5,7 +5,6 @@ import { ErrorService } from '../error/error.service';
 import { IJwtPayload } from 'src/shared/interfaces';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto/auth.dto';
-import { JwtStrategy } from './jwt.strategy';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +12,6 @@ export class AuthService {
     private readonly errorService: ErrorService,
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
-    private readonly jwtStrategy: JwtStrategy,
   ) {}
 
   async signUp(body: AuthDto) {

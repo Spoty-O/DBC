@@ -15,6 +15,6 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 FROM node:lts-alpine
 COPY --from=prod-deps /app/backend/node_modules ./node_modules
 COPY --from=build /app/backend/dist ./dist
-COPY ./.env ./.env
+COPY ./*.env ./
 EXPOSE 8080
 CMD [ "node", "dist/src/main" ]

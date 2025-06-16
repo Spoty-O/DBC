@@ -1,28 +1,18 @@
 import { Controller, Post, Body, Res, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CookieOptions, Response } from 'express';
-import { CookiesKeys } from 'src/shared/types/cookies.type';
-import { ApiConfigService } from '../api-config/api-config.service';
-import { CookiesGuard, JwtAuthGuard } from 'src/shared/guards';
+import { Response } from 'express';
+import { JwtCookiesAuthGuard } from 'src/shared/guards';
 import { AuthDto } from './dto/auth.dto';
 import { RequestWith } from 'src/shared/types';
 import { IJwtPayload } from 'src/shared/interfaces';
+import { CookiesService } from '../cookies/cookies.service';
 
 @Controller('auth')
 export class AuthController {
-  private readonly cookieConfig: CookieOptions;
-
   constructor(
     private readonly authService: AuthService,
-    private readonly configService: ApiConfigService,
-  ) {
-    this.cookieConfig = {
-      httpOnly: true,
-      secure: !this.configService.isDevMode,
-      maxAge: 1000 * 60 * 60 * 24 * 30,
-      sameSite: this.configService.isDevMode ? 'none' : 'strict',
-    };
-  }
+    private readonly cookiesService: CookiesService,
+  ) {}
 
   @Post('signup')
   async signUp(
@@ -30,7 +20,7 @@ export class AuthController {
     @Body() body: AuthDto,
   ) {
     const { accessToken, refreshToken } = await this.authService.signUp(body);
-    res.cookie(CookiesKeys.RefreshToken, refreshToken, this.cookieConfig);
+    this.cookiesService.set(res, 'refreshToken', refreshToken);
     return { accessToken };
   }
 
@@ -40,12 +30,12 @@ export class AuthController {
     @Body() body: AuthDto,
   ) {
     const { accessToken, refreshToken } = await this.authService.signIn(body);
-    res.cookie(CookiesKeys.RefreshToken, refreshToken, this.cookieConfig);
+    this.cookiesService.set(res, 'refreshToken', refreshToken);
     return { accessToken };
   }
 
   @Post('refresh')
-  @UseGuards(CookiesGuard, JwtAuthGuard)
+  @UseGuards(JwtCookiesAuthGuard)
   async refresh(@Req() req: RequestWith<{ payload: IJwtPayload }>) {
     return await this.authService.refresh(req.payload);
   }
