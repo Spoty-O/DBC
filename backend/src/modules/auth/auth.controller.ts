@@ -4,8 +4,9 @@ import { Response } from 'express';
 import { JwtCookiesAuthGuard } from 'src/shared/guards';
 import { AuthDto } from './dto/auth.dto';
 import { RequestWith } from 'src/shared/types';
-import { IJwtPayload } from 'src/shared/interfaces';
+import { IUser } from 'src/shared/interfaces';
 import { CookiesService } from '../cookies/cookies.service';
+import { LocalAuthGuard } from 'src/shared/guards/local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -16,27 +17,38 @@ export class AuthController {
 
   @Post('signup')
   async signUp(
+    @Req() req: RequestWith<{ user: IUser }>,
     @Res({ passthrough: true }) res: Response,
     @Body() body: AuthDto,
   ) {
-    const { accessToken, refreshToken } = await this.authService.signUp(body);
-    this.cookiesService.set(res, 'refreshToken', refreshToken);
-    return { accessToken };
+    req.user = await this.authService.signUp(body);
+    return this.signIn(req, res, body);
   }
 
   @Post('signin')
+  @UseGuards(LocalAuthGuard)
   async signIn(
+    @Req() req: RequestWith<{ user: IUser }>,
     @Res({ passthrough: true }) res: Response,
     @Body() body: AuthDto,
   ) {
-    const { accessToken, refreshToken } = await this.authService.signIn(body);
+    const { accessToken, refreshToken } = await this.authService.signIn(
+      req.user,
+      body.rememberMe,
+    );
     this.cookiesService.set(res, 'refreshToken', refreshToken);
     return { accessToken };
   }
 
   @Post('refresh')
   @UseGuards(JwtCookiesAuthGuard)
-  async refresh(@Req() req: RequestWith<{ user: IJwtPayload }>) {
+  async refresh(@Req() req: RequestWith<{ user: IUser }>) {
     return await this.authService.refresh(req.user);
+  }
+
+  @Post('logout')
+  @UseGuards(JwtCookiesAuthGuard)
+  async logout(@Res({ passthrough: true }) res: Response) {
+    return await this.cookiesService.clear(res, 'refreshToken');
   }
 }

@@ -4,12 +4,13 @@ import { User } from 'src/shared/entities';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { Repository } from 'typeorm';
 import { ErrorService } from '../error/error.service';
+import { IUser } from 'src/shared/interfaces';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly errorService: ErrorService,
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(User) private readonly userRepository: Repository<IUser>,
   ) {}
 
   async create(body: CreateUserDto) {
@@ -26,7 +27,7 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  async findOne(id: string) {
+  async findOneById(id: string) {
     const user = await this.userRepository.findOneBy({ id });
     if (!user) {
       throw await this.errorService.notFound();

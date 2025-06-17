@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { CookiesModule } from '../cookies/cookies.module';
 import { JwtHeaderStrategy } from './jwt-header.strategy';
 import { JwtCookiesStrategy } from './jwt-cookies.strategy';
+import { LocalStrategy } from './local.strategy';
 
 @Module({
   imports: [
@@ -17,6 +18,11 @@ import { JwtCookiesStrategy } from './jwt-cookies.strategy';
     CookiesModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtHeaderStrategy, JwtCookiesStrategy],
+  providers: [
+    AuthService,
+    JwtHeaderStrategy,
+    JwtCookiesStrategy,
+    LocalStrategy,
+  ],
 })
 export class AuthModule {}

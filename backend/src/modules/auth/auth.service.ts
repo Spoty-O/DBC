@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { compareSync } from 'bcryptjs';
 import { ErrorService } from '../error/error.service';
-import { IJwtPayload } from 'src/shared/interfaces';
+import { IUser } from 'src/shared/interfaces';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto/auth.dto';
 
@@ -15,12 +15,10 @@ export class AuthService {
   ) {}
 
   async signUp(body: AuthDto) {
-    const { id } = await this.userService.create(body);
-    return await this.generateTokens(id, body.rememberMe);
+    return await this.userService.create(body);
   }
 
-  private async validateUser(body: AuthDto) {
-    const { email, password } = body;
+  async validateUser(email: string, password: string) {
     const user = await this.userService.findOneByEmail(email);
     if (!compareSync(password, user.password)) {
       throw await this.errorService.unauthorized();
@@ -42,12 +40,14 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async signIn(body: AuthDto) {
-    const { id } = await this.validateUser(body);
-    return await this.generateTokens(id, body.rememberMe);
+  async signIn(user: IUser, rememberMe: boolean) {
+    return await this.generateTokens(user.id, rememberMe);
   }
 
-  async refresh({ sub }: IJwtPayload) {
-    return this.jwtService.sign({ sub }, { expiresIn: '15min' });
+  async refresh(user: IUser) {
+    const { id } = user;
+    return {
+      accessToken: this.jwtService.sign({ sub: id }, { expiresIn: '15min' }),
+    };
   }
 }

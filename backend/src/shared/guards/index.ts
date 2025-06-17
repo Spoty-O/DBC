@@ -1,3 +1,3 @@
 export * from './development.guard';
-export * from './jwt-cookies.guard';
-export * from './jwt-header.guard';
+export * from './jwt-auth-cookies.guard';
+export * from './jwt-auth-header.guard';

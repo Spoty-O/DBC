@@ -20,4 +20,8 @@ export class CookiesService {
   async set(res: Response, name: TCookiesKeys, value: string) {
     res.cookie(name, value, this.cookieConfig);
   }
+
+  async clear(res: Response, name: TCookiesKeys) {
+    res.clearCookie(name, this.cookieConfig);
+  }
 }
