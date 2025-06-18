@@ -1,36 +1,39 @@
-version: "3.8"
+name: DBC
 
 services:
-  frontend:
-    container_name: BIBA_FRONTEND
-    build:
-      context: ./
-      dockerfile: Dockerfile.frontend
-    restart: always
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app/frontend
-      - /app/frontend/node_modules
-    environment:
-      - FE_PORT=3000
-      - CHOKIDAR_USEPOLLING=true
-    command: yarn dev
+  # frontend:
+  #   container_name: BIBA_FRONTEND
+  #   build:
+  #     context: ./
+  #     dockerfile: Dockerfile.frontend
+  #   restart: always
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./frontend:/app/frontend
+  #     - /app/frontend/node_modules
+  #   environment:
+  #     - FE_PORT=3000
+  #     - CHOKIDAR_USEPOLLING=true
+  #   command: yarn dev
 
   backend:
-    container_name: BOBA_BACKEND
     stdin_open: true
     tty: true
-    build:
-      context: ./
-      dockerfile: Dockerfile.backend
-    volumes:
-      - ./backend:/app/backend
-      - /app/backend/node_modules
     restart: always
+    build:
+      context: ./backend
+    volumes:
+      - /app/backend/node_modules
+      - ./backend/dist:/app/backend/dist
     ports:
-      - "8080:8080"
-    command: yarn start:dev
+      - ${BE_PORT}:${BE_PORT}
+    command: node dist/src/main
     environment:
-      - BE_PORT=8080
-      - NODE_ENV=development
+      - NODE_ENV=${NODE_ENV}
+      - BE_PORT=${BE_PORT}
+      - FALLBACK_LANGUAGE=${FALLBACK_LANGUAGE}
+      - OWN_URL=${OWN_URL}
+      - POSTGRE_URL=${POSTGRE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - REDIS_URL=${REDIS_URL}
