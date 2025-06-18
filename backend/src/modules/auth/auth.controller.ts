@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Res, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  UseGuards,
+  Req,
+  HttpCode,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { JwtCookiesAuthGuard } from 'src/shared/guards';
@@ -47,6 +55,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @HttpCode(204)
   @UseGuards(JwtCookiesAuthGuard)
   async logout(@Res({ passthrough: true }) res: Response) {
     return await this.cookiesService.clear(res, 'refreshToken');

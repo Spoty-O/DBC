@@ -5,6 +5,12 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@scarf/scarf"
+    ]
+  },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "nest build",

@@ -7,7 +7,7 @@ export class EnvDto {
   NODE_ENV: EnvironmentMode = EnvironmentMode.Development;
 
   @IsPort()
-  PORT!: string;
+  BE_PORT!: string;
 
   @IsString()
   POSTGRE_URL!: string;

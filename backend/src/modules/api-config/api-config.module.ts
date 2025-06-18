@@ -8,7 +8,7 @@ export class ApiConfigModule {
     return {
       global: options?.isGlobal ?? false,
       module: ApiConfigModule,
-      imports: [ConfigModule.forRoot(options)],
+      imports: [ConfigModule.forRoot({ ...options, isGlobal: false })],
       providers: [ApiConfigService],
       exports: [ApiConfigService],
     };
