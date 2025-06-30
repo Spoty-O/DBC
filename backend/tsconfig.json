@@ -17,7 +17,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
-    "types": ["./src/global-types/global.d.ts", "jest"],
+    "types": ["jest"],
     "composite": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,

@@ -19,6 +19,6 @@ function envValidate(config: Record<string, unknown>) {
 
 export const envConfig: ConfigModuleOptions = {
   isGlobal: true,
-  ignoreEnvFile: true,
+  envFilePath: '../.env',
   validate: envValidate,
 };

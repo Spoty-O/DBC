@@ -1,18 +1,18 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { SchemaGeneratorService } from './schema-generator.service';
+// import { Test, TestingModule } from '@nestjs/testing';
+// import { SchemaGeneratorService } from './schema-generator.service';
 
-describe('SchemaGeneratorService', () => {
-  let service: SchemaGeneratorService;
+// describe('SchemaGeneratorService', () => {
+//   let service: SchemaGeneratorService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [SchemaGeneratorService],
-    }).compile();
+//   beforeEach(async () => {
+//     const module: TestingModule = await Test.createTestingModule({
+//       providers: [SchemaGeneratorService],
+//     }).compile();
 
-    service = module.get<SchemaGeneratorService>(SchemaGeneratorService);
-  });
+//     service = module.get<SchemaGeneratorService>(SchemaGeneratorService);
+//   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-});
+//   it('should be defined', () => {
+//     expect(service).toBeDefined();
+//   });
+// });

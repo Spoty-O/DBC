@@ -6,7 +6,6 @@ import {
   ITableSchema,
 } from 'src/shared/interfaces';
 import * as parsers from 'src/shared/utils/parsers';
-import { ErrorService } from '../error/error.service';
 import { getOrCreate } from 'src/shared/utils';
 
 @Injectable()
@@ -14,7 +13,7 @@ export class NlpService implements INlpService {
   readonly fieldParsers: IFieldParser[];
   readonly tableNameParser: IFieldParser;
 
-  constructor(private readonly errorService: ErrorService) {
+  constructor() {
     const { TableNameParser, ...otherParsers } = parsers;
     this.fieldParsers = Object.values(otherParsers).map(
       (ParserClass) => new ParserClass(),

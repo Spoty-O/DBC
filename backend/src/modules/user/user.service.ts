@@ -38,7 +38,7 @@ export class UserService {
   async findOneByEmail(email: string) {
     const user = await this.userRepository.findOneBy({ email });
     if (!user) {
-      throw await this.errorService.unauthorized();
+      throw await this.errorService.notFound();
     }
     return user;
   }

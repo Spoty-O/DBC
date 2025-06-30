@@ -39,15 +39,18 @@ bower_components
 build/Release
 
 # Dependency directories
-node_modules/
-jspm_packages/
-venv/
+**/node_modules
+**/jspm_packages
+**/*venv/
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
 
 # TypeScript cache
 *.tsbuildinfo
+
+# Python cache
+**/__pycache__
 
 # Optional npm cache directory
 .npm

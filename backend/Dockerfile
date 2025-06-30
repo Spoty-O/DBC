@@ -19,7 +19,7 @@ COPY ./ ./
 RUN pnpm run build
 
 FROM node:lts-alpine
-ARG PORT
+ARG BE_PORT
 COPY --from=prod-deps /app/backend/node_modules ./node_modules
 COPY --from=build /app/backend/dist ./dist
 EXPOSE $BE_PORT

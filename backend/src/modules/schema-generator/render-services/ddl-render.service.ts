@@ -4,7 +4,6 @@ import {
   IRenderUtil,
   ITableSchema,
 } from 'src/shared/interfaces';
-import { ErrorService } from 'src/modules/error/error.service';
 import * as utils from 'src/shared/utils/ddl-render';
 
 @Injectable()
@@ -13,7 +12,7 @@ export class DdlRenderService implements IRenderService {
   readonly primaryKeyRender: IRenderUtil;
   readonly foreignKeyRender: IRenderUtil;
 
-  constructor(private readonly errorService: ErrorService) {
+  constructor() {
     const { PrimaryKeyRender, ForeignKeyRender, ...otherUtils } = utils;
     this.utils = Object.values(otherUtils).map(
       (RenderClass) => new RenderClass(),

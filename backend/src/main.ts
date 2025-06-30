@@ -8,7 +8,6 @@ import * as bodyParser from 'body-parser';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap(): Promise<void> {
-  console.log(process.cwd() + '/dist/src/shared/entities/*.entity.js');
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.useGlobalPipes(
@@ -42,8 +41,10 @@ async function bootstrap(): Promise<void> {
   app.use(bodyParser.json({ limit: '100kb' }));
   app.use(bodyParser.urlencoded({ limit: '100kb', extended: true }));
 
+  console.log(configService);
+
   await app.listen(configService.port, () => {
-    console.log(`Server is running on ${configService.port || 8080}`);
+    console.log(`Server is running on ${configService.port}`);
   });
 }
 

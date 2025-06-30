@@ -1,6 +1,6 @@
 import { ITableSchema } from '../interfaces';
 
-export const userInputFixture = `
+export const nlpInputFixture = `
 user has id type int primary key autoIncrement
 user has email type varchar unique
 user has is_active type boolean default true
@@ -15,7 +15,7 @@ comment has post_id type int foreign key references post(id)
 comment has author_id type int foreign key references user(id)
 comment has content type text not null`;
 
-export const nlpResultFixture: ITableSchema[] = [
+export const nlpOutputFixture: ITableSchema[] = [
   {
     name: 'user',
     fields: [
@@ -98,29 +98,3 @@ export const nlpResultFixture: ITableSchema[] = [
     ],
   },
 ];
-
-export const ddlRenderResultFixture = `CREATE TABLE user (
-  id INT AUTO_INCREMENT,
-  email VARCHAR UNIQUE,
-  is_active BOOLEAN DEFAULT TRUE,
-  PRIMARY KEY (id)
-);
-
-CREATE TABLE post (
-  id INT AUTO_INCREMENT,
-  title VARCHAR,
-  body TEXT NOT NULL,
-  author_id INT,
-  PRIMARY KEY (id),
-  FOREIGN KEY (author_id) REFERENCES user(id)
-);
-
-CREATE TABLE comment (
-  id INT AUTO_INCREMENT,
-  post_id INT,
-  author_id INT,
-  content TEXT NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (post_id) REFERENCES post(id),
-  FOREIGN KEY (author_id) REFERENCES user(id)
-);`;

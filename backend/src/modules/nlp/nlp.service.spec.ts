@@ -1,33 +1,23 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestBed } from '@suites/unit';
 import { NlpService } from './nlp.service';
-import { ErrorService } from '../error/error.service';
-import { errorServiceMock } from 'src/shared/mocks/error.mock';
-import { nlpResultFixture, userInputFixture } from 'src/shared/fixtures';
+import { nlpInputFixture, nlpOutputFixture } from 'src/shared/fixtures';
 
-describe('NlpService', () => {
+describe('NlpService (Unit)', () => {
   let service: NlpService;
-  // let errorService: ErrorService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        NlpService,
-        { provide: ErrorService, useValue: errorServiceMock },
-      ],
-    }).compile();
+    const { unit } = await TestBed.solitary(NlpService).compile();
 
-    // errorService = module.get<ErrorService>(ErrorService);
-    service = module.get<NlpService>(NlpService);
+    service = unit;
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
-    jest.restoreAllMocks();
+    jest.resetAllMocks();
   });
 
-  it('should be parsed', async () => {
+  it('parseTemplateText: returns ITableSchema[] when valid', async () => {
     await expect(
-      service.parseTemplateText(userInputFixture),
-    ).resolves.toStrictEqual(nlpResultFixture);
+      service.parseTemplateText(nlpInputFixture),
+    ).resolves.toStrictEqual(nlpOutputFixture);
   });
 });
