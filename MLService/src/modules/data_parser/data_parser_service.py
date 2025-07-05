@@ -2,19 +2,12 @@ import re
 import sqlglot
 
 
-class DataParser:
-    __pattern: re.Pattern
-
+class DataParserService:
     def __init__(self) -> None:
-        self.__pattern = re.compile(
-            r"CREATE\s+TABLE\s+[\w\.]+\s*\((?:[^)(]*|\([^)(]*\))*\)",
-            re.IGNORECASE | re.DOTALL,
-        )
+        pass
 
-    def parseSqlTextToObject(self, textList: list[str]):
+    def parseSqlText(self, textList: list[str]):
         result: list[str] = []
         for text in textList:
-            clearSQL = re.findall(self.__pattern, text)
-            for sqlText in clearSQL:
-                parsed = sqlglot.parse_one(sqlText, dialect=sqlglot.Dialects.MYSQL)
-                print(parsed.to_py())
+            ast = sqlglot.parse_one(text, dialect=sqlglot.Dialects.POSTGRES)
+            # ast.find('')

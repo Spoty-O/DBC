@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from src.shared.types.env_type import EnvironmentMode
+from shared.types.env_type import EnvironmentMode
 from functools import lru_cache
 
 
