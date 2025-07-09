@@ -335,7 +335,7 @@ wheels = [
 [[package]]
 name = "mlservice"
 version = "0.1.0"
-source = { editable = "." }
+source = { virtual = "." }
 dependencies = [
     { name = "fastapi", extra = ["standard"] },
     { name = "pydantic-settings" },
