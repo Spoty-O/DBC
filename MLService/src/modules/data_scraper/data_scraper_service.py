@@ -1,7 +1,5 @@
 import asyncio
-import time
 from tqdm.asyncio import tqdm
-from modules.data_parser.data_parser_service import DataParserService
 from config.env_config import get_env
 from github import Github, Auth
 from github.PaginatedList import PaginatedList
