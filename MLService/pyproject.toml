@@ -9,4 +9,5 @@ dependencies = [
     "pygithub>=2.6.1",
     "sqlglot[rs]>=26.33.0",
     "tqdm>=4.67.1",
+    "wordninja>=2.0.0",
 ]

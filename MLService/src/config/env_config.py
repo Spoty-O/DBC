@@ -4,15 +4,15 @@ from functools import lru_cache
 
 
 class EnvironmentConfig(BaseSettings):
-    NODE_ENV: EnvironmentMode
+    PYTHON_ENV: EnvironmentMode
     ML_PORT: int
     GITHUB_TOKEN: str
 
-    model_config = SettingsConfigDict(env_file="../.env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     @property
     def isDevMode(self) -> bool:
-        return self.NODE_ENV == EnvironmentMode.Development
+        return self.PYTHON_ENV == EnvironmentMode.Development
 
 
 @lru_cache

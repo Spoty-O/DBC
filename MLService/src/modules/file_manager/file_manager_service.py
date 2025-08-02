@@ -1,21 +1,23 @@
 from pathlib import Path
-
-from shared.types.file_type import TFiles
+from shared.types.file_type import TFiles, TSaveMode
 
 
 class FileManagerService:
-    data_dir: Path
+    _dataDirPath: Path
 
     def __init__(self) -> None:
-        self.data_dir = Path(__file__).resolve().parents[3] / "data"
+        self._dataDirPath = Path(__file__).resolve().parents[3] / "data"
+        Path.mkdir(self=self._dataDirPath, exist_ok=True)
 
-    def save(self, file: TFiles, data: str):
-        f = open(self.data_dir / file, "a", encoding="utf-8")
+    def save(self, file: TFiles, data: str | list[str], mode: TSaveMode):
+        if isinstance(data, list):
+            data = "\n".join(data)
+        f = open(file=self._dataDirPath / file, mode=mode, encoding="utf-8")
         f.write(data)
         f.close()
 
     def read(self, file: TFiles):
-        f = open(self.data_dir / file, "r", encoding="utf-8")
+        f = open(self._dataDirPath / file, "r", encoding="utf-8")
         res = f.read()
         f.close()
         return res
