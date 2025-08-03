@@ -1,4 +1,4 @@
 from typing import Literal
 
-TFiles = Literal["stash.txt"]
+TFiles = Literal["data.csv"]
 TSaveMode = Literal["a", "w"]
