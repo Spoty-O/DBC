@@ -1,21 +1,18 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type */
-import { useNavigate } from "react-router-dom";
-import { text } from "../../consts";
-import { IBasicProps } from "../../types/props.types";
-import { useCallback } from "react";
+// \import { useNavigate } from "react-router-dom";
+// import { text } from "../../consts";
+// import { IBasicProps } from "../../types/props.types";
+// import { useCallback } from "react";
 
-interface IProps extends IBasicProps {}
-
-const HeaderComponent = ({ className }: IProps) => {
-  const navigate = useNavigate();
-  const handleClick = useCallback(() => {
-    navigate("/");
-  }, [navigate]);
+const HeaderComponent = () => {
+  // const navigate = useNavigate();
+  // const handleClick = useCallback(() => {
+  //   navigate("/");
+  // }, [navigate]);
   return (
-    <header className={className} onClick={handleClick}>
-      <div className="container">
-        <p className="header-text">{text.header}</p>
-      </div>
+    <header>
+      <nav>
+        <h1>DBC</h1>
+      </nav>
     </header>
   );
 };

@@ -1,10 +1,10 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-import { MainPage } from "../pages/main";
+import { Navigate, Route, Routes } from "react-router";
+import TemplateContainer from "../common/components/template/template.page";
 
 const PublicRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<MainPage />} />
+      <Route path="/" element={<TemplateContainer component={<>asdasda</>} />} />
       <Route path="*" element={<Navigate to={"/"} replace />} />
     </Routes>
   );
