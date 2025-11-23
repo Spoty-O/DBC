@@ -1,2 +1,1 @@
-export * from "./props.types";
-export * from "./recipe.types";
+export * from "./char.types";

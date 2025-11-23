@@ -1,8 +1,15 @@
-body, #root {
+html,
+body,
+#root {
   margin: 0;
   padding: 0;
-  align-items: stretch;
-  flex: 1;
+  width: 100vw;
+  height: 100vh;
+}
+
+body,
+#root {
+  position: relative;
   display: flex;
   flex-direction: column;
 }
