@@ -60,6 +60,9 @@ importers:
       vite:
         specifier: ^7.1.0
         version: 7.1.1(sass-embedded@1.93.2)(sass@1.93.2)
+      vite-plugin-glsl:
+        specifier: ^1.5.4
+        version: 1.5.4(esbuild@0.25.8)(vite@7.1.1(sass-embedded@1.93.2)(sass@1.93.2))
 
 packages:
 
@@ -1350,6 +1353,19 @@ packages:
   varint@6.0.0:
     resolution: {integrity: sha512-cXEIW6cfr15lFv563k4GuVuW/fiwjknytD37jIOLSdSWuOI6WnO/oKwmP2FQTU2l01LP8/M5TSAJpzUaGe3uWg==}
 
+  vite-plugin-glsl@1.5.4:
+    resolution: {integrity: sha512-EUmwL+IDK+dGDAlaKm89++k8aJ4qmHjLQxrngww3GLOOAQ4aZ48o9YR1ie7XPe08iDWlG+9Uh5V7oiZcXTUbyA==}
+    engines: {node: '>= 20.17.0', npm: '>= 10.8.3'}
+    peerDependencies:
+      '@rollup/pluginutils': ^5.x
+      esbuild: '>= 0.25'
+      vite: '>= 3.x'
+    peerDependenciesMeta:
+      '@rollup/pluginutils':
+        optional: true
+      esbuild:
+        optional: true
+
   vite@7.1.1:
     resolution: {integrity: sha512-yJ+Mp7OyV+4S+afWo+QyoL9jFWD11QFH0i5i7JypnfTcA1rmgxCbiA8WwAICDEtZ1Z1hzrVhN8R8rGTqkTY8ZQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -2593,6 +2609,12 @@ snapshots:
       punycode: 2.3.1
 
   varint@6.0.0: {}
+
+  vite-plugin-glsl@1.5.4(esbuild@0.25.8)(vite@7.1.1(sass-embedded@1.93.2)(sass@1.93.2)):
+    dependencies:
+      vite: 7.1.1(sass-embedded@1.93.2)(sass@1.93.2)
+    optionalDependencies:
+      esbuild: 0.25.8
 
   vite@7.1.1(sass-embedded@1.93.2)(sass@1.93.2):
     dependencies:
