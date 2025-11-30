@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import "./background.style.scss";
-import { getCamera, getRenderer, material } from "../../utils";
+import { getCamera, getMaterial, getRenderer, loadTexture } from "../../utils";
 
 const BackgroundComponent = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -9,6 +9,9 @@ const BackgroundComponent = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    // "/matrix_glyph_atlas.png"
+    // "/glyph_atlas.png"
+    const texture = loadTexture("/glyph_atlas.png");
 
     const { clientWidth, clientHeight } = canvas;
 
@@ -18,10 +21,17 @@ const BackgroundComponent = () => {
 
     const renderer = getRenderer(canvas);
     renderer.setSize(clientWidth, clientHeight, false);
-    material.uniforms.uResolution.value.set(clientWidth, clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.xr.enabled = false;
-
+    const material = getMaterial({
+      uniforms: {
+        iTime: { value: 0.0 },
+        iResolution: {
+          value: new THREE.Vector3(clientWidth, clientHeight, 1),
+        },
+        iChannel0: { value: texture },
+      },
+    });
     const geometry = new THREE.PlaneGeometry(2, 2);
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(0, 0, 0);
@@ -32,7 +42,7 @@ const BackgroundComponent = () => {
 
     const animate = (time: number) => {
       const t = time / 1000;
-      material.uniforms.uTime.value = t;
+      material.uniforms.iTime.value = t;
       renderer.render(scene, camera);
     };
     renderer.render(scene, camera);
@@ -41,7 +51,7 @@ const BackgroundComponent = () => {
     const handleResize = () => {
       const { clientWidth, clientHeight } = canvas;
       renderer.setSize(clientWidth, clientHeight, false);
-      material.uniforms.uResolution.value.set(clientWidth, clientHeight);
+      material.uniforms.iResolution.value.set(clientWidth, clientHeight, 1);
       camera.updateProjectionMatrix();
     };
 

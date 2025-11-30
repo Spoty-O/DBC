@@ -1,15 +1,23 @@
 import * as THREE from "three";
-import fragment from "../../../../assets/shaders/fragment.glsl";
-import vertex from "../../../../assets/shaders/vertex.glsl";
+import fragment from "../../../../assets/shaders/matrix_rotated.fragment.glsl";
+import vertex from "../../../../assets/shaders/matrix.vertex.glsl";
 
-export const material = new THREE.ShaderMaterial({
-  vertexShader: vertex,
-  fragmentShader: fragment,
-  uniforms: {
-    uTime: { value: 0 },
-    uResolution: {
-      value: new THREE.Vector2(window.innerWidth, window.innerHeight),
-    },
-    uMouse: { value: new THREE.Vector2(0, 0) },
-  },
-});
+const loader = new THREE.TextureLoader();
+
+export function loadTexture(path: string) {
+  console.log("start work");
+  const texture = loader.load(path);
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  return texture;
+}
+
+export function getMaterial(params: THREE.ShaderMaterialParameters) {
+  return new THREE.ShaderMaterial({
+    ...params,
+    vertexShader: vertex,
+    fragmentShader: fragment,
+  });
+}
