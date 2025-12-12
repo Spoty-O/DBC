@@ -1,4 +1,4 @@
-import TemplatePageContainer from "../../common/components/template/template.page";
+import TemplatePageContainer from "../../common/components/template/template.component";
 
 const MainPageContainer = () => {
   return (

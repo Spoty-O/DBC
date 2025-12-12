@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import "./background.style.scss";
 import { getCamera, getMaterial, getRenderer, loadTexture } from "../../utils";
+import { useMousePosition } from "../../hooks";
 
 const BackgroundComponent = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mousePosition = useMousePosition();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -29,6 +30,12 @@ const BackgroundComponent = () => {
         iResolution: {
           value: new THREE.Vector3(clientWidth, clientHeight, 1),
         },
+        iMouse: {
+          value: new THREE.Vector2(
+            mousePosition.current.x,
+            mousePosition.current.y,
+          ),
+        },
         iChannel0: { value: texture },
       },
     });
@@ -43,6 +50,10 @@ const BackgroundComponent = () => {
     const animate = (time: number) => {
       const t = time / 1000;
       material.uniforms.iTime.value = t;
+      material.uniforms.iMouse.value.set(
+        mousePosition.current.x,
+        mousePosition.current.y,
+      );
       renderer.render(scene, camera);
     };
     renderer.render(scene, camera);
@@ -61,9 +72,15 @@ const BackgroundComponent = () => {
       window.removeEventListener("resize", handleResize);
       renderer.dispose();
     };
-  }, []);
+  }, [mousePosition]);
 
-  return <canvas ref={canvasRef} id="background" />;
+  return (
+    <canvas
+      ref={canvasRef}
+      id="background"
+      className="fixed top-0 left-0 -z-1 block h-full w-full"
+    />
+  );
 };
 
 export default BackgroundComponent;

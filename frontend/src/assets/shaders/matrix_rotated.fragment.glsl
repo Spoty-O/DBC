@@ -7,8 +7,6 @@ uniform sampler2D iChannel0;
 varying vec2 vUv;
 
 void main() {
-    // vec4 tex = texture2D(iChannel0, vUv);
-    // gl_FragColor = vec4(tex.rgb, 1.0); // ВАЖНО: alpha = 1.0
     float M = 0.0;
     float A = 0.0;
     float T = iTime;
@@ -41,7 +39,7 @@ void main() {
         A += p.y * 0.6 - (M + A + A + 3.0) / 67.0;
 
         I += (X.a + .5) * (X + A) * (1.4 - p.y) / 2e2 / M / M / exp(A * .1);
-        vec3 col = I.rgb / 1.2;
-        gl_FragColor = vec4(col, 1.0);
     }
+    vec3 col = I.rgb / 1.2;
+    gl_FragColor = vec4(col, 1.0);
 }

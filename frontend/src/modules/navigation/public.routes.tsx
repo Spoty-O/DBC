@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from "react-router";
-import TemplateContainer from "../common/components/template/template.page";
+import TemplateContainer from "../common/components/template/template.component";
 
 const PublicRoutes = () => {
   return (
