@@ -1,13 +1,11 @@
-// import HeaderComponent from "../header/header.component";
-import type { ITemplateProps } from "../../types";
+import { Outlet } from "react-router";
 import BackgroundComponent from "../background/background.component";
 
-const TemplateContainer = ({ component }: ITemplateProps) => {
+const TemplateContainer = () => {
   return (
     <>
       <BackgroundComponent />
-      {/* <HeaderComponent /> */}
-      <main>{component}</main>
+      <Outlet />
     </>
   );
 };

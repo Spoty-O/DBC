@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { getCamera, getMaterial, getRenderer, loadTexture } from "../../utils";
 import { useMousePosition } from "../../hooks";
 
-const BackgroundComponent = () => {
+function BackgroundComponent() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mousePosition = useMousePosition();
 

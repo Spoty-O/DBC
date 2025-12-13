@@ -13,8 +13,8 @@ import {
   type FieldValues,
 } from "react-hook-form"
 
-import { cn } from "@/utils/index"
-import { Label } from "@/components/ui/label"
+import { cn } from "@common/utils/index"
+import { Label } from "@common/components/ui/label"
 
 const Form = FormProvider
 
@@ -156,7 +156,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
 }
 
 export {
-  useFormField,
+  // useFormField,
   Form,
   FormItem,
   FormLabel,

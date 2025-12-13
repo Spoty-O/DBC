@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [react(), glsl(), tailwindcss()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src/modules/common"),
+      "@common": path.resolve(__dirname, "src/modules/common"),
     },
   },
 });
