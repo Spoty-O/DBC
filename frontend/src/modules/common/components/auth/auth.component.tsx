@@ -19,6 +19,7 @@ function AuthComponent() {
   const form = useForm<IAuthSchema>({
     resolver: zodResolver(authSchema),
     defaultValues: { email: "", password: "" },
+    mode: "onBlur",
   });
 
   function onSubmit(values: IAuthSchema) {

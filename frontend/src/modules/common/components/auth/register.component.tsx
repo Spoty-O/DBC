@@ -22,6 +22,7 @@ function RegisterComponent() {
   const form = useForm<IRegisterSchema>({
     resolver: zodResolver(registerSchema),
     defaultValues: { email: "", password: "", confirmPassword: "" },
+    mode: "onBlur",
   });
 
   function onSubmit(values: IRegisterSchema) {

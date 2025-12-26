@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router";
 import AuthPage from "../pages/auth/auth.page";
-import BackgroundLayout from "@common/components/template/background.layout.component";
+import BackgroundLayout from "@common/components/ui/background.layout";
 import RegisterPage from "../pages/auth/register.page";
 
 const PublicRoutes = () => {

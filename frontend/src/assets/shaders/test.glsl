@@ -2,46 +2,39 @@ precision mediump float;
 
 uniform float iTime;
 uniform vec3 iResolution;
+uniform sampler2D iChannel0;
 
 varying vec2 vUv;
 
-vec3 palette(in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 f) {
-  return a + b * cos(6.283185 * (c * t + f));
-}
+const float GRID_X = 32.0;
+const float GRID_Y = 12.0;
+const float GLYPH_COUNT = GRID_X * GRID_Y; // 384
 
-float sdEquilateralTriangle(in vec2 p, in float r) {
-  const float k = sqrt(3.0);
-  p.x = abs(p.x) - r;
-  p.y = p.y + r / k;
-  if(p.x + k * p.y > 0.0)
-    p = vec2(p.x - k * p.y, -k * p.x - p.y) / 2.0;
-  p.x -= clamp(p.x, -2.0 * r, 0.0);
-  return -length(p) * sign(p.y);
+float sampleGlyph(vec2 localUV, float index) {
+  index = mod(index, GLYPH_COUNT);
+
+  float x = mod(index, GRID_X);
+  float y = floor(index / GRID_X);
+
+  vec2 uv = (localUV + vec2(x, y)) / vec2(GRID_X, GRID_Y);
+  return texture(iChannel0, uv).r;
 }
 
 void main() {
-  vec2 uv = vUv * 2. - 1.;
-  uv.x *= iResolution.x / iResolution.y;
+  // vec2 uv = (vUv * iResolution.xy - 0.5 * iResolution.xy) / iResolution.y;
+  // vec2 uv = vUv;
+  // vec2 cell = floor(uv * vec2(GRID_X, GRID_Y));
+  // vec2 local = fract(uv * vec2(GRID_X, GRID_Y));
 
-  vec3 a = vec3(0.699, 0.410, 0.574);
-  vec3 b = vec3(0.149, 0.491, 0.500);
-  vec3 c = vec3(0.128, 0.920, 1.370);
-  vec3 f = vec3(0.429, 0.535, 4.233);
+  // float id = cell.x + cell.y * GRID_X;
+  // float g = sampleGlyph(local, id);
 
-  float d = length(uv);
+  // gl_FragColor = vec4(vec3(g), 1.0);
+  vec4 tex = texture2D(iChannel0, vUv);
 
-  vec3 col = palette(d + iTime * 0.3, a, b, c, f);
+    // используем альфу как маску, фон становится чёрным
+  vec3 color = vec3(0.0); // чёрный фон
+  color += tex.a;          // символы проявляются через альфу
+  gl_FragColor = vec4(color, 1.0);
 
-  d = sdEquilateralTriangle(uv, .5);
-
-  d = sin(d * 8. + iTime) / 8.;
-
-  // d = sin(d * 8. + iTime) / 8.;
-  d = abs(d);
-
-  d = 0.02 / d;
-
-  col *= d;
-
-  gl_FragColor = vec4(col, 1.);
 }

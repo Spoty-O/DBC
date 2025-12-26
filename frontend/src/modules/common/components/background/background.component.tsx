@@ -12,7 +12,7 @@ function BackgroundComponent() {
     if (!canvas) return;
     // "/matrix_glyph_atlas.png"
     // "/glyph_atlas.png"
-    const texture = loadTexture("/glyph_atlas.png");
+    const texture = loadTexture("/matrix_atlas.png");
 
     const { clientWidth, clientHeight } = canvas;
 
