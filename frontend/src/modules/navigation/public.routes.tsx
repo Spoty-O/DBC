@@ -1,15 +1,16 @@
-import { Navigate, Route, Routes } from "react-router";
-import TemplateContainer from "../common/components/template/template.component";
+import { Route, Routes } from "react-router";
 import AuthPage from "../pages/auth/auth.page";
+import BackgroundLayout from "@common/components/template/background.layout.component";
+import RegisterPage from "../pages/auth/register.page";
 
 const PublicRoutes = () => {
   return (
     <Routes>
-      <Route element={<TemplateContainer />}>
+      <Route element={<BackgroundLayout />}>
         <Route path="/auth" element={<AuthPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="*" element={<></>} />
       </Route>
-      {/* <Route path="*" element={<Navigate to={"/"} replace />} /> */}
     </Routes>
   );
 };

@@ -1,6 +1,3 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { authSchema, type IAuthSchema } from "./schemas/auth.schema";
 import {
   Card,
   CardAction,
@@ -10,37 +7,42 @@ import {
   CardTitle,
 } from "../ui/shadcn/card";
 import { Button } from "../ui/shadcn/button";
-import { Field, FieldGroup, FieldSet } from "../ui/shadcn/field";
 import { Link } from "react-router";
-import { authFormInputProps } from "@common/consts/form.consts";
+import {
+  registerSchema,
+  type IRegisterSchema,
+} from "./schemas/register.schema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Field, FieldGroup, FieldSet } from "../ui/shadcn/field";
 import FormInput from "../ui/form.input";
+import { registerFormInputProps } from "@common/consts/form.consts";
 
-function AuthComponent() {
-  const form = useForm<IAuthSchema>({
-    resolver: zodResolver(authSchema),
-    defaultValues: { email: "", password: "" },
+function RegisterComponent() {
+  const form = useForm<IRegisterSchema>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { email: "", password: "", confirmPassword: "" },
   });
 
-  function onSubmit(values: IAuthSchema) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  function onSubmit(values: IRegisterSchema) {
     console.log(values);
   }
+
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>Login to your account</CardTitle>
+        <CardTitle>Register new account</CardTitle>
         <CardAction>
           <Button variant={"link"}>
-            <Link to={"/register"}>Sing Up</Link>
+            <Link to={"/auth"}>Log in</Link>
           </Button>
         </CardAction>
       </CardHeader>
       <CardContent>
-        <form id="auth-form" onSubmit={form.handleSubmit(onSubmit)}>
+        <form id={"register-form"} onSubmit={form.handleSubmit(onSubmit)}>
           <FieldSet>
             <FieldGroup>
-              {authFormInputProps.map((props, index) => (
+              {registerFormInputProps.map((props, index) => (
                 <FormInput key={index} {...props} control={form.control} />
               ))}
             </FieldGroup>
@@ -52,7 +54,7 @@ function AuthComponent() {
           <Button type="reset" variant={"outline"} onClick={() => form.reset()}>
             Reset
           </Button>
-          <Button type="submit" form="auth-form">
+          <Button type="submit" form="register-form">
             Submit
           </Button>
         </Field>
@@ -61,4 +63,4 @@ function AuthComponent() {
   );
 }
 
-export default AuthComponent;
+export default RegisterComponent;

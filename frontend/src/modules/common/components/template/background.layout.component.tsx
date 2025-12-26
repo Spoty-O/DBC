@@ -1,13 +1,15 @@
 import { Outlet } from "react-router";
 import BackgroundComponent from "../background/background.component";
 
-const TemplateContainer = () => {
+const BackgroundLayout = () => {
   return (
     <>
       <BackgroundComponent />
-      <Outlet />
+      <main className="flex h-full w-full items-center justify-center">
+        <Outlet />
+      </main>
     </>
   );
 };
 
-export default TemplateContainer;
+export default BackgroundLayout;
