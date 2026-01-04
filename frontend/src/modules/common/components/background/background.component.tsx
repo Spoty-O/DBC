@@ -1,18 +1,17 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { getCamera, getMaterial, getRenderer, loadTexture } from "../../utils";
-import { useMousePosition } from "../../hooks";
+import atlas from "@assets/matrix_atlas.png";
 
 function BackgroundComponent() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mousePosition = useMousePosition();
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    // "/matrix_glyph_atlas.png"
+    // "/matrix_atlas.png"
     // "/glyph_atlas.png"
-    const texture = loadTexture("/matrix_atlas.png");
+    const texture = loadTexture(atlas);
 
     const { clientWidth, clientHeight } = canvas;
 
@@ -26,17 +25,12 @@ function BackgroundComponent() {
     renderer.xr.enabled = false;
     const material = getMaterial({
       uniforms: {
-        iTime: { value: 0.0 },
+        iTime: { value: 0 },
         iResolution: {
-          value: new THREE.Vector3(clientWidth, clientHeight, 1),
-        },
-        iMouse: {
-          value: new THREE.Vector2(
-            mousePosition.current.x,
-            mousePosition.current.y,
-          ),
+          value: [clientWidth, clientHeight, 1],
         },
         iChannel0: { value: texture },
+        uCellSize: { value: 20 },
       },
     });
     const geometry = new THREE.PlaneGeometry(2, 2);
@@ -50,10 +44,6 @@ function BackgroundComponent() {
     const animate = (time: number) => {
       const t = time / 1000;
       material.uniforms.iTime.value = t;
-      material.uniforms.iMouse.value.set(
-        mousePosition.current.x,
-        mousePosition.current.y,
-      );
       renderer.render(scene, camera);
     };
     renderer.render(scene, camera);
@@ -72,7 +62,7 @@ function BackgroundComponent() {
       window.removeEventListener("resize", handleResize);
       renderer.dispose();
     };
-  }, [mousePosition]);
+  }, []);
 
   return (
     <canvas
@@ -81,6 +71,6 @@ function BackgroundComponent() {
       className="fixed top-0 left-0 -z-1 block h-full w-full"
     />
   );
-};
+}
 
 export default BackgroundComponent;

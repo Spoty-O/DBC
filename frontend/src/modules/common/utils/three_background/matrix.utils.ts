@@ -5,9 +5,7 @@ import vertex from "../../../../assets/shaders/matrix.vertex.glsl";
 const loader = new THREE.TextureLoader();
 
 export function loadTexture(path: string) {
-  console.log("start work");
   const texture = loader.load(path);
-  texture.format = THREE.RGBAFormat;
   texture.minFilter = THREE.LinearFilter;
   texture.magFilter = THREE.LinearFilter;
   texture.wrapS = THREE.RepeatWrapping;

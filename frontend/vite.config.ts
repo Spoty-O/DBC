@@ -10,6 +10,11 @@ export default defineConfig({
   resolve: {
     alias: {
       "@common": path.resolve(__dirname, "src/modules/common"),
+      "@assets": path.resolve(__dirname, "src/assets"),
+      "@navigation": path.resolve(__dirname, "src/navigation"),
+      "@pages": path.resolve(__dirname, "src/pages"),
+      "@services": path.resolve(__dirname, "src/services"),
+      "@store": path.resolve(__dirname, "src/store"),
     },
   },
 });

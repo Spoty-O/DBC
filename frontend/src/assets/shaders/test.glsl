@@ -1,40 +1,56 @@
 precision mediump float;
 
-uniform float iTime;
 uniform vec3 iResolution;
+uniform float iTime;
 uniform sampler2D iChannel0;
 
 varying vec2 vUv;
 
-const float GRID_X = 32.0;
-const float GRID_Y = 12.0;
-const float GLYPH_COUNT = GRID_X * GRID_Y; // 384
+uniform float uCellSize;
 
-float sampleGlyph(vec2 localUV, float index) {
-  index = mod(index, GLYPH_COUNT);
+uint murmurHash11(uint src) {
+  const uint M = 0x5bd1e995u;
+  uint h = 1190494759u;
+  src *= M;
+  src ^= src >> 24u;
+  src *= M;
+  h *= M;
+  h ^= src;
+  h ^= h >> 13u;
+  h *= M;
+  h ^= h >> 15u;
+  return h;
+}
 
-  float x = mod(index, GRID_X);
-  float y = floor(index / GRID_X);
+// 1 output, 1 input
+float hash(float src) {
+  uint h = murmurHash11(floatBitsToUint(src));
+  return uintBitsToFloat(h & 0x007fffffu | 0x3f800000u) - 1.0;
+}
 
-  vec2 uv = (localUV + vec2(x, y)) / vec2(GRID_X, GRID_Y);
-  return texture(iChannel0, uv).r;
+float random(float min, float max, float col) {
+  float r = hash(col);
+  return min + r * (max - min);
 }
 
 void main() {
-  // vec2 uv = (vUv * iResolution.xy - 0.5 * iResolution.xy) / iResolution.y;
-  // vec2 uv = vUv;
-  // vec2 cell = floor(uv * vec2(GRID_X, GRID_Y));
-  // vec2 local = fract(uv * vec2(GRID_X, GRID_Y));
+  vec2 pos = vUv.xy * iResolution.xy;
+  float colIndex = floor(pos.x / uCellSize);
+  float rowIndex = floor(pos.y / uCellSize);
+  // float innerX = mod(pos.x, uCellSize);
+  // float innerY = mod(pos.y, uCellSize);
 
-  // float id = cell.x + cell.y * GRID_X;
-  // float g = sampleGlyph(local, id);
+  float speed = random(6., 15., colIndex);
+  float tailLen = random(4., 15., colIndex);
+  float phase = random(0., 5., colIndex);
 
-  // gl_FragColor = vec4(vec3(g), 1.0);
-  vec4 tex = texture2D(iChannel0, vUv);
+  float head = iTime * speed - phase;
+  float rowsCount = floor(iResolution.y/uCellSize);
+  float headWrapped = mod(head, rowsCount);
+  float d = mod(headWrapped + rowIndex, rowsCount);
+  float brightness = 1. - d / tailLen;
 
-    // используем альфу как маску, фон становится чёрным
-  vec3 color = vec3(0.0); // чёрный фон
-  color += tex.a;          // символы проявляются через альфу
-  gl_FragColor = vec4(color, 1.0);
-
+  vec3 color = vec3(0.);
+  color.g = brightness;
+  gl_FragColor = vec4(color, 1.);
 }
