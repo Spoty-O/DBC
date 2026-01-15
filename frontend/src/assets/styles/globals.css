@@ -15,6 +15,7 @@ body,
   position: relative;
   display: flex;
   flex-direction: column;
+  background-color: black;
 }
 
 @custom-variant dark (&:is(.dark *));

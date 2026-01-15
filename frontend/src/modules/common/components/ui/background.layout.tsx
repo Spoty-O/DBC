@@ -5,7 +5,7 @@ const BackgroundLayout = () => {
   return (
     <>
       <BackgroundComponent />
-      <main className="flex h-full w-full items-center justify-center">
+      <main className="flex h-full w-full items-center justify-center z-10">
         <Outlet />
       </main>
     </>
