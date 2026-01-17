@@ -16,7 +16,6 @@ export type TMatrixProps = {
   strength: number;
   speedMul: number;
   seed: number;
-  z?: number;
 };
 
 export type TShaderMaterial = ShaderMaterial & IUniforms;

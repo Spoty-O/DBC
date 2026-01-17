@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
@@ -21,10 +20,7 @@ function NativePostFX() {
   const film = useMemo(() => new FilmPass(0.1, false), []);
 
   useEffect(() => {
-    composer.setSize(size.width, size.height);
-
     composer.addPass(new RenderPass(scene, camera));
-
     composer.addPass(after);
     composer.addPass(bloom);
     composer.addPass(film);
@@ -33,11 +29,12 @@ function NativePostFX() {
       composer.passes.length = 0;
       composer.dispose();
     };
-  }, [composer, scene, camera, size.width, size.height, bloom, after, film]);
+  }, [composer, scene, camera, bloom, after, film]);
 
   useEffect(() => {
+    composer.setSize(size.width, size.height);
     bloom.setSize(size.width, size.height);
-  }, [size.width, size.height, bloom]);
+  }, [size.width, size.height, bloom, composer]);
 
   useFrame(() => {
     composer.render();

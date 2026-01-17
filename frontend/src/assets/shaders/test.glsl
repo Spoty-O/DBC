@@ -34,10 +34,6 @@ float median3(vec3 v) {
   return max(min(v.r, v.g), min(max(v.r, v.g), v.b));
 }
 
-vec2 getCellIndex(vec2 px) {
-  return floor(px / uCellSize);
-}
-
 vec2 getCellUV(vec2 px) {
   return fract(px / uCellSize);
 }
@@ -80,10 +76,7 @@ float columnPhase(float col, float tail) {
   return rand(15.0, 200.0, col - tail);
 }
 
-float headDistance(float row, float col, float rows) {
-  float speed = columnSpeed(col + uSeedOffset) * uSpeedMul;
-  float tail = columnTail(col, rows);
-  float phase = columnPhase(col, tail);
+float headDistance(float row, float col, float rows, float speed, float phase) {
   float head = iTime * speed + phase;
   float wrapped = mod(head, rows);
   return mod(wrapped + row, rows);
@@ -103,19 +96,26 @@ float headMask(float d) {
 vec3 getColor(float d) {
   float h = headMask(d);
   vec3 tail = COLOR_TAIL * 0.95;
-  vec3 head = COLOR_HEAD * 3.2;
+  vec3 head = COLOR_HEAD * 1.5;
   return mix(tail, head, h);
 }
 
 void main() {
   vec2 px = vUv * iResolution.xy;
-  vec2 cell = getCellIndex(px);
+  vec2 cell = floor(px / uCellSize);
   float row = cell.y;
-  float colSeed = cell.x + uSeedOffset * 13.0;
+  float col = cell.x;
+  float colSeed = col + uSeedOffset * 13.0;
   float rows = floor(iResolution.y / uCellSize);
-  float d = headDistance(row, cell.x, rows);
-  float tail = columnTail(cell.x, rows);
+  float speed = columnSpeed(col + uSeedOffset) * uSpeedMul;
+  float tail = columnTail(col, rows);
+  float phase = columnPhase(col, tail);
+  float d = headDistance(row, col, rows, speed, phase);
   float b = tailBrightness(d, tail, colSeed);
+  if(b < 0.004) {
+    gl_FragColor = vec4(0.0);
+    return;
+  }
   float glyph = sampleGlyph(px, cell);
   float alpha = b * glyph;
   vec3 color = getColor(d) * alpha;

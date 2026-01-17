@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useAtlas } from "@common/utils";
@@ -10,37 +10,34 @@ import type {
   TShaderParams,
 } from "@common/types/background.types";
 
-function MatrixRain({ cellSize, strength, speedMul, seed, z = 0 }: TMatrixProps) {
+function MatrixRain({ cellSize, strength, speedMul, seed }: TMatrixProps) {
   const texture = useAtlas();
   const myMesh = useRef<THREE.Mesh<THREE.PlaneGeometry, TShaderMaterial>>(null);
-  const { size, viewport, gl } = useThree();
+  const { viewport, size } = useThree();
 
-  const materialParams = useRef<TShaderParams>({
-    uniforms: {
-      iTime: { value: 0 },
-      iResolution: {
-        value: [size.width, size.height, 1],
+  const materialParams = useMemo<TShaderParams>(() => {
+    return {
+      uniforms: {
+        iTime: { value: 0 },
+        iResolution: {
+          value: [1, 1, 1],
+        },
+        iChannel0: { value: texture },
+        uCellSize: { value: cellSize },
+        uLayerStrength: { value: strength },
+        uSpeedMul: { value: speedMul },
+        uSeedOffset: { value: seed },
       },
-      iChannel0: { value: texture },
-      uCellSize: { value: cellSize },
-      uLayerStrength: { value: strength },
-      uSpeedMul: { value: speedMul },
-      uSeedOffset: { value: seed },
-    },
-    vertexShader: vertex,
-    fragmentShader: fragment,
-    transparent: true,
-    depthWrite: false,
-  });
+      vertexShader: vertex,
+      fragmentShader: fragment,
+      transparent: true,
+      depthWrite: false,
+    };
+  }, [cellSize, strength, speedMul, seed, texture]);
 
   useEffect(() => {
-    const dpr = gl.getPixelRatio();
-    materialParams.current.uniforms.iResolution.value = [
-      size.width * dpr,
-      size.height * dpr,
-      1,
-    ];
-  }, [size.width, size.height, gl]);
+    materialParams.uniforms.iResolution.value = [size.width, size.height, 1];
+  }, [materialParams, size.width, size.height]);
 
   useFrame(({ clock }) => {
     const mesh = myMesh.current;
@@ -51,11 +48,11 @@ function MatrixRain({ cellSize, strength, speedMul, seed, z = 0 }: TMatrixProps)
   return (
     <mesh
       ref={myMesh}
-      position={[0, 0, z]}
+      position={[0, 0, 0]}
       scale={[viewport.width, viewport.height, 1]}
     >
       <planeGeometry args={[1, 1]} />
-      <shaderMaterial {...materialParams.current} />
+      <shaderMaterial {...materialParams} />
     </mesh>
   );
 }

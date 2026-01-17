@@ -10,7 +10,7 @@ function BackgroundComponent() {
     <div className="fixed top-0 left-0 z-0 block h-full w-full">
       <Canvas
         gl={{ antialias: false, alpha: true }}
-        dpr={[1, 2]}
+        dpr={1}
         onCreated={({ gl }) => {
           gl.outputColorSpace = THREE.SRGBColorSpace;
           gl.toneMapping = THREE.ACESFilmicToneMapping;
@@ -18,7 +18,7 @@ function BackgroundComponent() {
         }}
       >
         <NativePostFX />
-        <OrthographicCamera args={[-1, 1, 1, -1, 0, 1]} />
+        <OrthographicCamera makeDefault  position={[0, 0, 1]}/>
         {matrixParams.map((props, index) => (
           <MatrixRain key={index} {...props} />
         ))}
