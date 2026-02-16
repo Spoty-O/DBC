@@ -1,3 +1,3 @@
 export * from "./local.storage.utils";
-export * from "./three_background/index";
+export * from "./three.utils";
 export * from "./shadcn.utils";

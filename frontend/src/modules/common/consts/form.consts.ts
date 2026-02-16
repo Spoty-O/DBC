@@ -1,6 +1,7 @@
 import type { IAuthSchema } from "@common/components/auth/schemas/auth.schema";
 import type { IRegisterSchema } from "@common/components/auth/schemas/register.schema";
-import type { TFormInputProps } from "@common/types";
+import type { IChatSchema } from "@common/components/chat/schemas/chat.schema";
+import type { TFormChatProps, TFormInputProps } from "@common/types";
 
 export const registerFormInputProps: Omit<
   TFormInputProps<IRegisterSchema>,
@@ -58,7 +59,19 @@ export const authFormInputProps: Omit<
       type: "password",
       id: "auth-password-input",
       placeholder: "Enter your password",
-      autoComplete: "new-password",
+      autoComplete: "current-password",
     },
   },
 ];
+
+export const chatFormInputProps: Omit<
+  TFormChatProps<IChatSchema>,
+  "control"
+> = {
+  name: "text",
+  label: "",
+  inputProps: {
+    id: "chat-input",
+    placeholder: "Enter your request here"
+  },
+};

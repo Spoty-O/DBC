@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { useTexture } from "@react-three/drei";
+import { useProgress, useTexture } from "@react-three/drei";
 import atlas from "@assets/matrix_atlas.png";
 import { useEffect } from "react";
 
@@ -12,4 +12,10 @@ export function useAtlas() {
     texture.wrapT = THREE.RepeatWrapping;
   }, [texture]);
   return texture;
+}
+
+export function useSceneProgress() {
+  const { active, total, progress } = useProgress();
+  console.log(total, progress)
+  return !active && total > 0;
 }

@@ -1,11 +1,11 @@
-import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
-import { OrthographicCamera } from "@react-three/drei";
-import MatrixRain from "./rain.component";
-import NativePostFX from "./nativePostFx.component";
+import * as THREE from "three";
+import NativePostFX from "./background/nativePostFx";
+import { Loader, OrthographicCamera } from "@react-three/drei";
+import MatrixRain from "./background/rain";
 import { matrixParams } from "@common/consts";
 
-function BackgroundComponent() {
+function SceneComponent() {
   return (
     <div className="fixed top-0 left-0 z-0 block h-full w-full">
       <Canvas
@@ -18,13 +18,14 @@ function BackgroundComponent() {
         }}
       >
         <NativePostFX />
-        <OrthographicCamera makeDefault  position={[0, 0, 1]}/>
+        <OrthographicCamera makeDefault position={[0, 0, 1]} />
         {matrixParams.map((props, index) => (
           <MatrixRain key={index} {...props} />
         ))}
       </Canvas>
+      <Loader />
     </div>
   );
 }
 
-export default BackgroundComponent;
+export default SceneComponent;
