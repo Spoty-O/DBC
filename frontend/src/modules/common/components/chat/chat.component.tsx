@@ -5,6 +5,8 @@ import { chatSchema, type IChatSchema } from "./schemas/chat.schema";
 import ChatInput from "../ui/chat.input";
 import { chatFormInputProps } from "@common/consts";
 import { FieldGroup, FieldSet } from "../ui/shadcn/field";
+import { ItemGroup } from "../ui/shadcn/item";
+import ChatMessage from "../ui/chat.message";
 
 function ChatComponent() {
   const form = useForm<IChatSchema>({
@@ -28,6 +30,9 @@ function ChatComponent() {
   return (
     <Card className="w-full justify-end rounded-none border-0">
       <CardContent>
+        <ItemGroup>
+          <ChatMessage/>
+        </ItemGroup>
         <form id={"chat-form"} onSubmit={form.handleSubmit(onSubmit)}>
           <FieldSet>
             <FieldGroup>
