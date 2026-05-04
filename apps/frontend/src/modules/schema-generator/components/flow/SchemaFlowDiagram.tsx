@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Background,
   BackgroundVariant,
   Controls,
   MarkerType,
   MiniMap,
+  Panel,
   ReactFlow,
   useEdgesState,
   useNodesState,
@@ -13,6 +14,7 @@ import {
   type ReactFlowInstance,
 } from "@xyflow/react";
 import type { GeneratedSchema } from "types";
+import { Button } from "../../../../components/ui/button";
 import { applyDagreLayout, buildFlowFromModel, type SchemaTableNode } from "./schema-flow-layout";
 import { TableFlowNode } from "./TableFlowNode";
 
@@ -31,8 +33,10 @@ type SchemaFlowDiagramProps = {
 
 /** Interactive ER-style graph from LLM `model` (auto-layout via Dagre). */
 export function SchemaFlowDiagram({ model }: SchemaFlowDiagramProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const rf = useRef<ReactFlowInstance<SchemaTableNode, Edge> | null>(null);
   const modelKey = useMemo(() => JSON.stringify(model), [model]);
+  const [exporting, setExporting] = useState(false);
 
   const [nodes, setNodes, onNodesChange] = useNodesState<SchemaTableNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
@@ -48,8 +52,49 @@ export function SchemaFlowDiagram({ model }: SchemaFlowDiagramProps) {
     return () => cancelAnimationFrame(id);
   }, [modelKey, model, setNodes, setEdges]);
 
+  const handleExportPng = useCallback(async () => {
+    const root = containerRef.current;
+    const viewport = root?.querySelector(
+      ".react-flow__viewport",
+    ) as HTMLElement | null;
+    if (!viewport) return;
+
+    setExporting(true);
+    try {
+      const { toPng } = await import("html-to-image");
+      rf.current?.fitView({ padding: 0.12, maxZoom: 1.15 });
+      await new Promise((r) => requestAnimationFrame(() => r(undefined)));
+
+      const dataUrl = await toPng(viewport, {
+        cacheBust: true,
+        backgroundColor: "#020805",
+        pixelRatio: 2,
+        filter: (node) => {
+          if (!(node instanceof HTMLElement)) return true;
+          if (node.closest(".diagram-export-panel")) return false;
+          if (node.closest(".react-flow__minimap")) return false;
+          if (node.closest(".react-flow__controls")) return false;
+          if (node.closest(".react-flow__attribution")) return false;
+          return true;
+        },
+      });
+
+      const a = document.createElement("a");
+      a.download = `schema-diagram-${new Date().toISOString().slice(0, 19).replace(/:/g, "-")}.png`;
+      a.href = dataUrl;
+      a.click();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setExporting(false);
+    }
+  }, []);
+
   return (
-    <div className="schema-flow-pane h-[min(58vh,600px)] w-full min-h-[320px] rounded-lg border border-matrix-border/50 bg-black/40 shadow-inner">
+    <div
+      ref={containerRef}
+      className="schema-flow-pane relative h-[min(58vh,600px)] w-full min-h-[320px] rounded-lg border border-matrix-border/50 bg-black/40 shadow-inner"
+    >
       <ReactFlow<SchemaTableNode, Edge>
         onInit={(instance) => {
           rf.current = instance;
@@ -88,6 +133,21 @@ export function SchemaFlowDiagram({ model }: SchemaFlowDiagramProps) {
         }}
         className="schema-flow"
       >
+        <Panel
+          position="top-right"
+          className="diagram-export-panel !m-2 flex gap-2"
+        >
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="font-mono text-[10px] uppercase tracking-wide"
+            disabled={exporting || nodes.length === 0}
+            onClick={handleExportPng}
+          >
+            {exporting ? "Exporting…" : "Export PNG"}
+          </Button>
+        </Panel>
         <Background
           variant={BackgroundVariant.Dots}
           gap={18}
