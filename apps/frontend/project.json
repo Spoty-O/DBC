@@ -1,0 +1,57 @@
+{
+  "name": "frontend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/frontend/src",
+  "projectType": "application",
+  "tags": ["type:app", "scope:frontend"],
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/frontend"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/vite:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "frontend:build",
+        "buildLibsFromSource": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "frontend:build:development"
+        },
+        "production": {
+          "buildTarget": "frontend:build:production"
+        }
+      }
+    },
+    "preview": {
+      "continuous": true,
+      "executor": "@nx/vite:preview-server",
+      "defaultConfiguration": "production",
+      "options": {
+        "buildTarget": "frontend:build:production"
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{workspaceRoot}/coverage/apps/frontend"],
+      "options": {
+        "configFile": "apps/frontend/vitest.config.ts"
+      }
+    }
+  }
+}

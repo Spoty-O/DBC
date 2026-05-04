@@ -1,20 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-empty-object-type */
-import { useStaff } from "../../common/hooks";
 import { IBasicProps } from "../../common/types";
-import { useStaffStore } from "../../store/staff.store";
-import { text } from "../../common/consts";
+import { SchemaGeneratorPage } from "../../schema-generator/pages/SchemaGeneratorPage";
 
 interface IProps extends IBasicProps {}
-const MainPageContainer = ({ className }: IProps) => {
-  useStaff();
-  const { staff } = useStaffStore();
 
-  return (
-    <div className={className}>
-      <div className="main-container"></div>
-    </div>
-  );
+const MainPageContainer = ({ className }: IProps) => {
+  return <SchemaGeneratorPage className={className} />;
 };
 
 export default MainPageContainer;
