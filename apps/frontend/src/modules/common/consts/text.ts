@@ -1,4 +1,4 @@
 export const text = {
   space: " ",
-  header: "header",
+  header: "DBC",
 };

@@ -1,2 +1,1 @@
-export * from './header.component';
-export * from './header.styled';
+export { default as Header } from "./header.component";

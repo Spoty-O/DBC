@@ -39,9 +39,9 @@ export function SchemaGeneratorPage({ className }: { className?: string }) {
       <BackgroundComponent />
 
       <div className="relative z-10 mx-auto flex max-w-5xl flex-col gap-10 px-4 py-10 sm:px-6 lg:px-8">
-        <header className="space-y-2 border-b border-matrix-border/30 pb-6">
+        <header className="space-y-2 rounded-xl border border-matrix-border/40 bg-matrix-panel/50 px-5 py-6 shadow-matrix backdrop-blur-panel sm:px-6">
           <p className="font-mono text-xs uppercase tracking-[0.35em] text-emerald-500/80">
-            DBC / schema control
+            Schema control
           </p>
           <h1 className="font-mono text-2xl font-semibold tracking-tight text-matrix-glow sm:text-3xl">
             Database schema generator
