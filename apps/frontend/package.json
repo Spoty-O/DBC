@@ -11,6 +11,8 @@
     "test": "nx run frontend:test"
   },
   "dependencies": {
+    "@dagrejs/dagre": "^1.1.5",
+    "@xyflow/react": "^12.8.2",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@emotion/react": "^11.13.3",

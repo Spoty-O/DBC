@@ -33,7 +33,8 @@ describe('GenerateService', () => {
       schema: usersPostsSchema,
       resultType: SchemaResultType.SQL,
     });
-    expect(Object.keys(r).sort()).toEqual(['description', 'schema']);
+    expect(Object.keys(r).sort()).toEqual(['description', 'model', 'schema']);
+    expect(r.model).toBe(usersPostsSchema);
     expect(r.schema).toBe('DDL');
     expect(r.description).toBe('Two tables with FK.');
   });

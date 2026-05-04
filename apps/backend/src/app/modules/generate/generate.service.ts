@@ -57,7 +57,7 @@ export class GenerateService {
         throw new SchemaValidationError('Description was empty', []);
       }
 
-      return { schema, description };
+      return { schema, description, model: schemaJson };
     } catch (err) {
       this.mapDatabaseOutputErrors(err);
     }

@@ -1,5 +1,8 @@
+import { useEffect, useState } from "react";
 import type { GenerateResponse } from "types";
+import { Button } from "../../../components/ui/button";
 import { CopyButton } from "./CopyButton";
+import { SchemaDiagramView } from "./SchemaDiagramView";
 import { cn } from "../../../lib/utils";
 
 type ResultPreviewProps = {
@@ -8,7 +11,15 @@ type ResultPreviewProps = {
   className?: string;
 };
 
+type ResultTab = "output" | "diagram";
+
 export function ResultPreview({ result, error, className }: ResultPreviewProps) {
+  const [tab, setTab] = useState<ResultTab>("output");
+
+  useEffect(() => {
+    if (result) setTab("output");
+  }, [result]);
+
   if (error) {
     return (
       <section
@@ -52,34 +63,73 @@ export function ResultPreview({ result, error, className }: ResultPreviewProps) 
         className,
       )}
     >
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-mono text-sm font-semibold uppercase tracking-widest text-matrix-glow/90">
-          Output
-        </h2>
-        <div className="flex flex-wrap gap-2">
-          <CopyButton text={result.schema} label="Copy schema" />
-          <CopyButton text={result.description} label="Copy description" />
-          <CopyButton text={combined} label="Copy all" />
+      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+        <div
+          role="tablist"
+          aria-label="Result view"
+          className="flex w-full max-w-md gap-1 rounded-lg border border-matrix-border/40 bg-black/30 p-1 sm:w-auto"
+        >
+          <Button
+            type="button"
+            role="tab"
+            aria-selected={tab === "output"}
+            variant={tab === "output" ? "default" : "ghost"}
+            size="sm"
+            className="flex-1 font-mono text-xs sm:flex-none"
+            onClick={() => setTab("output")}
+          >
+            Code & summary
+          </Button>
+          <Button
+            type="button"
+            role="tab"
+            aria-selected={tab === "diagram"}
+            variant={tab === "diagram" ? "default" : "ghost"}
+            size="sm"
+            className="flex-1 font-mono text-xs sm:flex-none"
+            onClick={() => setTab("diagram")}
+          >
+            Diagram
+          </Button>
         </div>
+
+        {tab === "output" ? (
+          <div className="flex flex-wrap gap-2">
+            <CopyButton text={result.schema} label="Copy schema" />
+            <CopyButton text={result.description} label="Copy description" />
+            <CopyButton text={combined} label="Copy all" />
+          </div>
+        ) : (
+          <CopyButton
+            text={JSON.stringify(result.model, null, 2)}
+            label="Copy model JSON"
+          />
+        )}
       </div>
 
-      <div>
-        <h3 className="mb-2 font-mono text-xs uppercase tracking-wider text-emerald-500/90">
-          Schema
-        </h3>
-        <pre className="max-h-[min(55vh,520px)] overflow-auto rounded-lg border border-matrix-border/40 bg-black/55 p-4 font-mono text-xs leading-relaxed text-emerald-100/95 shadow-inner sm:text-sm">
-          {result.schema}
-        </pre>
-      </div>
+      {tab === "output" ? (
+        <>
+          <div>
+            <h3 className="mb-2 font-mono text-xs uppercase tracking-wider text-emerald-500/90">
+              Schema
+            </h3>
+            <pre className="max-h-[min(55vh,520px)] overflow-auto rounded-lg border border-matrix-border/40 bg-black/55 p-4 font-mono text-xs leading-relaxed text-emerald-100/95 shadow-inner sm:text-sm">
+              {result.schema}
+            </pre>
+          </div>
 
-      <div>
-        <h3 className="mb-2 font-mono text-xs uppercase tracking-wider text-emerald-500/90">
-          Description
-        </h3>
-        <p className="rounded-lg border border-matrix-border/40 bg-black/40 p-4 font-sans text-sm leading-relaxed text-emerald-100/90">
-          {result.description}
-        </p>
-      </div>
+          <div>
+            <h3 className="mb-2 font-mono text-xs uppercase tracking-wider text-emerald-500/90">
+              Description
+            </h3>
+            <p className="rounded-lg border border-matrix-border/40 bg-black/40 p-4 font-sans text-sm leading-relaxed text-emerald-100/90">
+              {result.description}
+            </p>
+          </div>
+        </>
+      ) : (
+        <SchemaDiagramView model={result.model} />
+      )}
     </section>
   );
 }

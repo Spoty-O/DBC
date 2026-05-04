@@ -58,10 +58,13 @@ export interface GenerateRequest {
 }
 
 /**
- * Strict API payload: generated schema as a single string, plus a short technical description.
- * JSON keys: "schema", "description".
+ * Strict API payload: rendered schema text, brief description, and the **LLM-validated JSON model**
+ * (`tables` / fields / FK refs) used by renderers and the diagram tab.
+ * JSON keys: "schema", "description", "model".
  */
 export interface GenerateResponse {
   schema: string;
   description: string;
+  /** Same object produced by the LLM pipeline after Zod/manual validation (not re-derived from `schema` text). */
+  model: GeneratedSchema;
 }
