@@ -1,0 +1,4 @@
+{
+  "text": "Customers place orders. Each order has many order items linked to products. Products have SKU, name, and price.",
+  "resultType": "prisma"
+}

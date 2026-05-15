@@ -68,6 +68,20 @@
         "jestConfig": "apps/backend/jest.config.ts",
         "passWithNoTests": false
       }
+    },
+    "test-nf": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/backend/jest.config.ts",
+        "testPathPatterns": [
+          "generate.api.e2e-spec",
+          "generate.reliability.e2e-spec",
+          "generate.security.e2e-spec",
+          "generate.concurrency.e2e-spec"
+        ],
+        "passWithNoTests": false
+      }
     }
   }
 }

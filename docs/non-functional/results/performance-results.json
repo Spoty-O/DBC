@@ -1,0 +1,113 @@
+{
+  "executed": true,
+  "tool": "autocannon",
+  "endpoint": "POST /api/generate",
+  "configuration": {
+    "baseUrl": "http://localhost:3000",
+    "duration": 10,
+    "connections": 2,
+    "pipelining": 1,
+    "scenarioCooldownMs": 8000,
+    "requestTimeoutSec": 120
+  },
+  "probe": {
+    "reachable": true,
+    "status": 201
+  },
+  "runs": [
+    {
+      "scenario": "sql",
+      "target": "http://localhost:3000/api/generate",
+      "durationSeconds": 10,
+      "connections": 2,
+      "requests": {
+        "total": 113,
+        "successful": 8,
+        "failed": 105,
+        "errorRate": 0.9292
+      },
+      "latencyMs": {
+        "average": 156.2,
+        "max": 2148,
+        "p50": 71,
+        "p97_5": 1748,
+        "p99": 1757
+      },
+      "throughput": {
+        "requestsPerSecond": 11.19,
+        "bytesPerSecond": 5871,
+        "totalBytes": 58703
+      },
+      "statusCodeCounts": {
+        "201": {
+          "count": 8
+        },
+        "400": {
+          "count": 105
+        }
+      },
+      "timestamp": "2026-05-15T17:48:05.375Z"
+    },
+    {
+      "scenario": "prisma",
+      "target": "http://localhost:3000/api/generate",
+      "durationSeconds": 10,
+      "connections": 2,
+      "requests": {
+        "total": 4,
+        "successful": 4,
+        "failed": 0,
+        "errorRate": 0
+      },
+      "latencyMs": {
+        "average": 2730.75,
+        "max": 4310,
+        "p50": 1267,
+        "p97_5": 4310,
+        "p99": 4310
+      },
+      "throughput": {
+        "requestsPerSecond": 0.37,
+        "bytesPerSecond": 1074.8,
+        "totalBytes": 10748
+      },
+      "statusCodeCounts": {
+        "201": {
+          "count": 4
+        }
+      },
+      "timestamp": "2026-05-15T17:48:24.192Z"
+    },
+    {
+      "scenario": "typeorm",
+      "target": "http://localhost:3000/api/generate",
+      "durationSeconds": 10,
+      "connections": 2,
+      "requests": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "errorRate": 0
+      },
+      "latencyMs": {
+        "average": 3177.67,
+        "max": 3876,
+        "p50": 2920,
+        "p97_5": 3876,
+        "p99": 3876
+      },
+      "throughput": {
+        "requestsPerSecond": 0.29,
+        "bytesPerSecond": 766.5,
+        "totalBytes": 7662
+      },
+      "statusCodeCounts": {
+        "201": {
+          "count": 3
+        }
+      },
+      "timestamp": "2026-05-15T17:48:42.465Z"
+    }
+  ],
+  "timestamp": "2026-05-15T17:48:42.465Z"
+}

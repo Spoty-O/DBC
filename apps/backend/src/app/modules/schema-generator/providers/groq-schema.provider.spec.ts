@@ -3,6 +3,7 @@ jest.mock('groq-sdk');
 import Groq from 'groq-sdk';
 import { GroqSchemaProvider } from './groq-schema.provider';
 import { CConfigService } from '../../../../config/env.service';
+import { LlmConcurrencyLimiter } from '../lib/llm-concurrency.limiter';
 import { SchemaGenerationMaxRetriesException } from '../lib/schema-generation-failed.error';
 import { VALID_MINIMAL_SCHEMA_JSON } from '../lib/test-fixtures';
 
@@ -15,7 +16,17 @@ describe('GroqSchemaProvider.generateAndValidateJson', () => {
       GROQ_MODEL: 'test-model',
       schemaGenerationMaxRetries: maxRetries,
       isDevMode: false,
+      llmMaxConcurrentRequests: 2,
+      llmRequestTimeoutMs: 60_000,
+      llmRetryAttempts: 1,
+      llmRetryDelayMs: 0,
     } as CConfigService;
+  }
+
+  function mockLimiter(): LlmConcurrencyLimiter {
+    return {
+      run: <T>(fn: () => Promise<T>) => fn(),
+    } as LlmConcurrencyLimiter;
   }
 
   beforeEach(() => {
@@ -35,7 +46,7 @@ describe('GroqSchemaProvider.generateAndValidateJson', () => {
           },
         }) as never,
     );
-    const p = new GroqSchemaProvider(mockConfig());
+    const p = new GroqSchemaProvider(mockConfig(), mockLimiter());
     const out = await p.generateAndValidateJson('please build users table');
     expect(out.tables[0].name).toBe('users');
     expect(typeof out.tables[0].fields[0].type).toBe('string');
@@ -62,7 +73,7 @@ describe('GroqSchemaProvider.generateAndValidateJson', () => {
         }) as never,
     );
 
-    const p = new GroqSchemaProvider(mockConfig(2));
+    const p = new GroqSchemaProvider(mockConfig(2), mockLimiter());
     const out = await p.generateAndValidateJson('minimal user table');
     expect(create).toHaveBeenCalledTimes(2);
     expect(out.tables).toHaveLength(1);
@@ -95,7 +106,7 @@ describe('GroqSchemaProvider.generateAndValidateJson', () => {
         }) as never,
     );
 
-    const p = new GroqSchemaProvider(mockConfig(2));
+    const p = new GroqSchemaProvider(mockConfig(2), mockLimiter());
     await expect(
       p.generateAndValidateJson('any description here xxxxx'),
     ).rejects.toBeInstanceOf(SchemaGenerationMaxRetriesException);
@@ -124,7 +135,7 @@ describe('GroqSchemaProvider.generateAndValidateJson', () => {
         }) as never,
     );
 
-    const p = new GroqSchemaProvider(mockConfig(2));
+    const p = new GroqSchemaProvider(mockConfig(2), mockLimiter());
     const out = await p.generateAndValidateJson(
       'user table minimal spec xxxxxxxxx',
     );

@@ -20,4 +20,10 @@ describe('TypeOrmRendererService', () => {
     expect(code).toContain('@Index');
     expect(code).toContain('@Unique');
   });
+
+  it('emits FK scalar columns alongside relation properties', () => {
+    const { code } = svc.render(usersPostsSchema);
+    expect(code).toContain('userId');
+    expect(code).toMatch(/@Column\(\{ type: 'uuid' \}\)[\s\S]*userId: string;/);
+  });
 });

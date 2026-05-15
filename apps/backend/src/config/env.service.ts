@@ -30,4 +30,24 @@ export class CConfigService {
     const v = this.configService.get('SCHEMA_GEN_MAX_RETRIES');
     return v !== undefined && v !== null ? v : 2;
   }
+
+  get llmMaxConcurrentRequests(): number {
+    const v = this.configService.get('LLM_MAX_CONCURRENT_REQUESTS');
+    return v !== undefined && v !== null ? v : 2;
+  }
+
+  get llmRequestTimeoutMs(): number {
+    const v = this.configService.get('LLM_REQUEST_TIMEOUT_MS');
+    return v !== undefined && v !== null ? v : 120_000;
+  }
+
+  get llmRetryAttempts(): number {
+    const v = this.configService.get('LLM_RETRY_ATTEMPTS');
+    return v !== undefined && v !== null ? v : 3;
+  }
+
+  get llmRetryDelayMs(): number {
+    const v = this.configService.get('LLM_RETRY_DELAY_MS');
+    return v !== undefined && v !== null ? v : 750;
+  }
 }

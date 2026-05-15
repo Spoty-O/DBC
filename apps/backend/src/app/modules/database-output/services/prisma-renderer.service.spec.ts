@@ -21,4 +21,54 @@ describe('PrismaRendererService', () => {
     expect(code).toContain('@@map("users")');
     expect(code).toContain('@@map("posts")');
   });
+
+  it('renames conflicting scalar/relation field names instead of failing', () => {
+    const schema = {
+      tables: [
+        {
+          name: 'customers',
+          fields: [
+            {
+              name: 'id',
+              type: 'uuid' as const,
+              nullable: false,
+              primary: true,
+              unique: true,
+            },
+          ],
+        },
+        {
+          name: 'orders',
+          fields: [
+            {
+              name: 'id',
+              type: 'uuid' as const,
+              nullable: false,
+              primary: true,
+              unique: true,
+            },
+            {
+              name: 'customer',
+              type: 'string' as const,
+              nullable: false,
+              primary: false,
+              unique: false,
+            },
+            {
+              name: 'customer_id',
+              type: 'uuid' as const,
+              nullable: false,
+              primary: false,
+              unique: false,
+              references: { table: 'customers', field: 'id' },
+            },
+          ],
+        },
+      ],
+    };
+    const { code, warnings } = svc.render(schema);
+    expect(code).toContain('model Orders');
+    expect(code).toContain('customerRelation');
+    expect(warnings.some((w) => w.includes('renamed duplicate'))).toBe(true);
+  });
 });

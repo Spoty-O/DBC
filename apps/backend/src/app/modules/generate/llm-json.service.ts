@@ -5,8 +5,19 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { GroqSchemaProvider } from '../schema-generator/providers/groq-schema.provider';
+import {
+  classifyProviderError,
+  getProviderErrorMessage,
+} from '../schema-generator/lib/llm-provider-error.util';
+import { LlmRequestTimeoutError } from '../schema-generator/lib/llm-request-timeout.error';
 import { SchemaGenerationMaxRetriesException } from '../schema-generator/lib/schema-generation-failed.error';
-import { LlmGenerationError, SchemaValidationError } from './errors/generate.errors';
+import {
+  LlmGenerationError,
+  LlmProviderUnavailableError,
+  LlmRateLimitError,
+  LlmTimeoutError,
+  SchemaValidationError,
+} from './errors/generate.errors';
 
 @Injectable()
 export class LlmJsonService {
@@ -36,6 +47,20 @@ function extractHttpMessage(err: HttpException): string {
 }
 
 function mapLlmOrSchemaError(err: unknown): never {
+  if (err instanceof LlmRateLimitError) {
+    throw err;
+  }
+  if (err instanceof LlmTimeoutError) {
+    throw err;
+  }
+
+  if (err instanceof LlmRequestTimeoutError) {
+    throw new LlmTimeoutError(err.message);
+  }
+  if (err instanceof LlmProviderUnavailableError) {
+    throw err;
+  }
+
   if (err instanceof SchemaGenerationMaxRetriesException) {
     const body = err.getResponse() as {
       lastIssues?: string[];
@@ -46,6 +71,27 @@ function mapLlmOrSchemaError(err: unknown): never {
         ? body.message
         : 'Schema JSON could not be validated after repair attempts',
       Array.isArray(body?.lastIssues) ? body.lastIssues : [],
+    );
+  }
+
+  const providerKind = classifyProviderError(err);
+  const providerMsg = getProviderErrorMessage(err);
+
+  if (providerKind === 'rate_limit') {
+    throw new LlmRateLimitError(
+      'LLM provider rate limit exceeded; try again shortly',
+      providerMsg,
+    );
+  }
+  if (providerKind === 'timeout') {
+    throw new LlmTimeoutError(
+      providerMsg || 'LLM provider request timed out',
+    );
+  }
+  if (providerKind === 'unavailable') {
+    throw new LlmProviderUnavailableError(
+      'LLM provider is temporarily unavailable',
+      providerMsg,
     );
   }
 
@@ -61,8 +107,7 @@ function mapLlmOrSchemaError(err: unknown): never {
     }
     if (
       lower.includes('empty response') ||
-      lower.includes('not configured') ||
-      lower.includes('groq')
+      lower.includes('not configured')
     ) {
       throw new LlmGenerationError(msg);
     }
@@ -71,7 +116,7 @@ function mapLlmOrSchemaError(err: unknown): never {
 
   if (err instanceof InternalServerErrorException) {
     const msg = extractHttpMessage(err);
-    throw new LlmGenerationError(
+    throw new LlmProviderUnavailableError(
       'LLM provider configuration or runtime error',
       msg,
     );

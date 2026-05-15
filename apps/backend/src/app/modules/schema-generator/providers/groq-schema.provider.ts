@@ -9,9 +9,13 @@ import type { ChatCompletionMessageParam } from 'groq-sdk/resources/chat/complet
 import type { GeneratedSchema } from 'types';
 import { CConfigService } from '../../../../config/env.service';
 import { buildRepairPrompt } from '../lib/build-repair-prompt.util';
+import { LlmRequestTimeoutError } from '../lib/llm-request-timeout.error';
 import { GeneratedSchemaValidationError } from '../lib/generated-schema-validation.error';
+import { LlmConcurrencyLimiter } from '../lib/llm-concurrency.limiter';
 import { LlmJsonParseError } from '../lib/llm-json-parse.error';
 import { parseLlmJsonResponse } from '../lib/parse-llm-json.util';
+import { isTransientProviderError } from '../lib/llm-provider-error.util';
+import { withRetry, withTimeout } from '../lib/llm-retry.util';
 import { DATABASE_SCHEMA_JSON_DESCRIPTION } from '../lib/schema-description';
 import { SchemaGenerationMaxRetriesException } from '../lib/schema-generation-failed.error';
 import {
@@ -59,7 +63,10 @@ export class GroqSchemaProvider {
 
   private readonly logger = new Logger(GroqSchemaProvider.name);
 
-  constructor(private readonly config: CConfigService) {
+  constructor(
+    private readonly config: CConfigService,
+    private readonly concurrency: LlmConcurrencyLimiter,
+  ) {
     const apiKey = this.config.GROQ_API_KEY;
     if (!apiKey) {
       throw new InternalServerErrorException(
@@ -74,7 +81,7 @@ export class GroqSchemaProvider {
     this.model = model;
   }
 
-  private async generateRawResponse(
+  private async callGroq(
     messages: ChatCompletionMessageParam[],
   ): Promise<string> {
     const completion = await this.client.chat.completions.create({
@@ -89,10 +96,45 @@ export class GroqSchemaProvider {
     return content;
   }
 
+  private async generateRawResponse(
+    messages: ChatCompletionMessageParam[],
+  ): Promise<string> {
+    const timeoutMs = this.config.llmRequestTimeoutMs;
+
+    return withRetry(
+      () =>
+        withTimeout(
+          this.callGroq(messages),
+          timeoutMs,
+          () => new LlmRequestTimeoutError(timeoutMs),
+        ),
+      {
+        attempts: this.config.llmRetryAttempts,
+        delayMs: this.config.llmRetryDelayMs,
+        isRetryable: isTransientProviderError,
+        onRetry: (err, attempt) => {
+          this.logger.warn(
+            `Groq transient error (attempt ${attempt}/${this.config.llmRetryAttempts}): ${err instanceof Error ? err.message : String(err)}`,
+          );
+        },
+      },
+    );
+  }
+
   /**
    * Parse + manual + Zod validation with automatic repair prompts.
+   * Serialized through {@link LlmConcurrencyLimiter} so concurrent HTTP requests
+   * do not overwhelm the Groq provider.
    */
   async generateAndValidateJson(userPrompt: string): Promise<GeneratedSchema> {
+    return this.concurrency.run(() =>
+      this.generateAndValidateJsonInner(userPrompt),
+    );
+  }
+
+  private async generateAndValidateJsonInner(
+    userPrompt: string,
+  ): Promise<GeneratedSchema> {
     const maxRetries = this.config.schemaGenerationMaxRetries;
     let messages: ChatCompletionMessageParam[] = [
       { role: 'system', content: BASE_JSON_PROMPT },
@@ -180,5 +222,12 @@ export class GroqSchemaProvider {
         ];
       }
     }
+
+    throw new SchemaGenerationMaxRetriesException({
+      message: 'Schema generation loop ended without a result',
+      attempts: maxRetries + 1,
+      maxRetries,
+      lastIssues: [],
+    });
   }
 }

@@ -1,0 +1,4 @@
+{
+  "text": "Departments contain employees. Each employee has one manager. Track hire date and job title.",
+  "resultType": "typeorm"
+}

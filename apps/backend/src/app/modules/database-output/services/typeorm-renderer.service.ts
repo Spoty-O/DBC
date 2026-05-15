@@ -135,6 +135,7 @@ function buildEntityClass(
       const propName = relationPropertyName(field, refTable, warnings);
       const inverseOnParent = inverseCollectionProp(table.name, refTable, warnings);
       const parentVar = camelCaseFromSnake(refTable);
+      lines.push(...buildFkScalarFieldLines(field));
       lines.push(`  @Index(['${field.name}'])`);
       lines.push(
         `  @ManyToOne(() => ${refClass}, (${parentVar}) => ${parentVar}.${inverseOnParent}, { nullable: ${field.nullable} })`,
@@ -199,6 +200,16 @@ function relationPropertyName(
     `TypeORM: FK column "${field.name}" does not end with _id; relation property named "${guess}".`,
   );
   return guess;
+}
+
+function buildFkScalarFieldLines(field: DatabaseField): string[] {
+  const lines: string[] = [];
+  const opts = typeOrmColumnOptions(field.type);
+  const prop = camelCaseFromSnake(field.name);
+  lines.push(`  @Column(${opts})`);
+  lines.push(`  ${prop}: ${tsPrimitiveForField(field)};`);
+  lines.push('');
+  return lines;
 }
 
 function buildScalarFieldLines(field: DatabaseField): string[] {

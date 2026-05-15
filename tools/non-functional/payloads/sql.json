@@ -1,0 +1,4 @@
+{
+  "text": "Each user has a unique email and optional age. Each post belongs to one user. A post has a title and body text.",
+  "resultType": "sql"
+}

@@ -1,0 +1,13 @@
+{
+  "executed": true,
+  "exitCode": 0,
+  "tool": "jest + supertest",
+  "command": "pnpm test:nf",
+  "testSuites": 4,
+  "testsPassed": 25,
+  "testsFailed": 0,
+  "durationSeconds": 21,
+  "groqProvider": "mocked",
+  "includesConcurrencyE2e": true,
+  "timestamp": "2026-05-15T17:50:00.000Z"
+}

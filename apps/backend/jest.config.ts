@@ -10,7 +10,11 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js'],
   coverageDirectory: '../../coverage/apps/backend',
-  testMatch: ['<rootDir>/src/**/?(*.)+(spec|test).ts'],
+  testMatch: [
+    '<rootDir>/src/**/*.spec.ts',
+    '<rootDir>/src/**/*.test.ts',
+    '<rootDir>/src/**/*.e2e-spec.ts',
+  ],
   moduleNameMapper: {
     '^types$': '<rootDir>/../../shared/types/index.ts',
   },

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { UnsupportedOrmError } from '../errors/database-output.errors';
 import type {
   DatabaseField,
   DatabaseSchema,
@@ -83,26 +82,44 @@ function buildModel(
       const refModel = pascalCaseFromSnake(refTable);
       const scalarType = fkScalarPrismaType(field);
       const optional = field.nullable ? '?' : '';
-      const relName = relationFieldName(field, refTable);
-      reservePrismaFieldName(usedNames, field.name, modelName);
-      reservePrismaFieldName(usedNames, relName, modelName);
-      lines.push(`  ${field.name} ${scalarType}${optional}`);
+      const fkName = allocatePrismaFieldName(
+        usedNames,
+        field.name,
+        modelName,
+        warnings,
+      );
+      const relName = allocatePrismaFieldName(
+        usedNames,
+        relationFieldName(field, refTable),
+        modelName,
+        warnings,
+      );
+      lines.push(`  ${fkName} ${scalarType}${optional}`);
       lines.push(
-        `  ${relName} ${refModel} @relation(fields: [${field.name}], references: [${refField}])`,
+        `  ${relName} ${refModel} @relation(fields: [${fkName}], references: [${refField}])`,
       );
       lines.push('');
       continue;
     }
 
-    reservePrismaFieldName(usedNames, field.name, modelName);
-    lines.push(`  ${field.name} ${scalarLine(field)}`);
+    const fieldName = allocatePrismaFieldName(
+      usedNames,
+      field.name,
+      modelName,
+      warnings,
+    );
+    lines.push(`  ${fieldName} ${scalarLine(field)}`);
   }
 
   const incoming = collectIncoming(table.name, schema);
   for (const inc of incoming) {
     const childModel = pascalCaseFromSnake(inc.fromTable);
-    const inv = inverseListProp(inc.fromTable);
-    reservePrismaFieldName(usedNames, inv, modelName);
+    const inv = allocatePrismaFieldName(
+      usedNames,
+      inverseListProp(inc.fromTable),
+      modelName,
+      warnings,
+    );
     lines.push(`  ${inv} ${childModel}[]`);
   }
 
@@ -152,18 +169,28 @@ function fkScalarPrismaType(field: DatabaseField): string {
   }
 }
 
-function reservePrismaFieldName(
+/** Avoid duplicate Prisma field names when LLM JSON mixes scalars and FK relation names. */
+function allocatePrismaFieldName(
   used: Set<string>,
-  name: string,
+  preferred: string,
   modelName: string,
-): void {
-  if (used.has(name)) {
-    throw new UnsupportedOrmError(
-      `Prisma model "${modelName}" would declare the field "${name}" twice; simplify references or rename columns in the schema JSON.`,
-      'prisma-duplicate-field',
-    );
+  warnings: string[],
+): string {
+  if (!used.has(preferred)) {
+    used.add(preferred);
+    return preferred;
   }
-  used.add(name);
+  let candidate = `${preferred}Relation`;
+  let suffix = 2;
+  while (used.has(candidate)) {
+    candidate = `${preferred}Relation${suffix}`;
+    suffix += 1;
+  }
+  warnings.push(
+    `Prisma: renamed duplicate field "${preferred}" to "${candidate}" on model ${modelName}.`,
+  );
+  used.add(candidate);
+  return candidate;
 }
 
 function scalarLine(field: DatabaseField): string {
